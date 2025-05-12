@@ -11,16 +11,16 @@ public class ConfigureDb : IHostingStartup
 {
     public void Configure(IWebHostBuilder builder) => builder
         .ConfigureServices((context, services) => {
-            var connectionString = context.Configuration.GetConnectionString("DefaultConnection")
-                ?? "DataSource=App_Data/app.db;Cache=Shared";
+            var connectionString = context.Configuration.GetConnectionString("SQLAZURECONNSTR_DefaultConnection")
+                ?? "Data Source=XAVIER-ASUS;Initial Catalog=MMData;Integrated Security=True;Trust Server Certificate=True";
             
             services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(
-                connectionString, SqliteDialect.Provider));
+                connectionString, SqlServer2022Dialect.Provider));
 
             // $ dotnet ef migrations add CreateIdentitySchema
             // $ dotnet ef database update
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(connectionString, b => b.MigrationsAssembly(nameof(MembershipManager))));
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly(nameof(MembershipManager))));
             
             // Enable built-in Database Admin UI at /admin-ui/database
             services.AddPlugin(new AdminDatabaseFeature());

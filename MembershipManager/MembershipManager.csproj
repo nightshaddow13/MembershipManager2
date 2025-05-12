@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <SpaRoot>..\MembershipManager.Client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
@@ -27,8 +27,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.*" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.*" />
     <PackageReference Include="ServiceStack" Version="8.*" />
+    <PackageReference Include="ServiceStack.OrmLite.SqlServer.Data" Version="8.7.2" />
     <PackageReference Include="ServiceStack.Server" Version="8.*" />
     <PackageReference Include="ServiceStack.Ormlite.Sqlite.Data" Version="8.*" />
     <PackageReference Include="ServiceStack.Jobs" Version="8.*" />
