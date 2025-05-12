@@ -14,7 +14,8 @@ namespace MembershipManager;
 public class ConfigureDbMigrations : IHostingStartup
 {
     public void Configure(IWebHostBuilder builder) => builder
-        .ConfigureAppHost(appHost => {
+        .ConfigureAppHost(appHost =>
+        {
             var migrator = new Migrator(appHost.Resolve<IDbConnectionFactory>(), typeof(Migration1000).Assembly);
             AppTasks.Register("migrate", _ =>
             {
