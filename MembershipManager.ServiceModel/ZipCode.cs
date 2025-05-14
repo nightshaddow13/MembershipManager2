@@ -24,15 +24,12 @@ public enum State
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Shared"), Description("Find Zip Codes")]
 [ValidateHasRole(Roles.Committee)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryZipCode : QueryDb<ZipCode> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
+[Tag("Shared"), Description("Create a new Zip Code")]
 [ValidateHasRole(Roles.CouncilExecutive)]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateZipCode : ICreateDb<ZipCode>, IReturn<IdResponse>
@@ -44,9 +41,7 @@ public class CreateZipCode : ICreateDb<ZipCode>, IReturn<IdResponse>
     public State State { get; set; } = State.FL;
 }
 
-[ValidateHasRole(Roles.Committee)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Shared"), Description("Update a Zip Code")]
 [ValidateHasRole(Roles.Committee)]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateZipCode : IPatchDb<ZipCode>, IReturn<IdResponse>
@@ -57,8 +52,7 @@ public class UpdateZipCode : IPatchDb<ZipCode>, IReturn<IdResponse>
     public State State { get; set; } = State.FL;
 }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
+[Tag("Shared"), Description("Delete a Zip Code")]
 [ValidateHasRole(Roles.CouncilExecutive)]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteZipCode : IDeleteDb<ZipCode>, IReturnVoid

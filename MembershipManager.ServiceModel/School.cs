@@ -51,17 +51,13 @@ public enum SchoolType
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Schools"), Description("Find Schools")]
 [AutoApply(Behavior.AuditQuery)]
 public class QuerySchool : QueryDb<School> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Schools"), Description("Create a new School")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateSchool : ICreateDb<School>, IReturn<IdResponse>
 {
@@ -76,9 +72,7 @@ public class CreateSchool : ICreateDb<School>, IReturn<IdResponse>
 }
 
 [ValidateHasRole(Roles.Committee)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[Tag("Schools"), Description("Update a School")]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateSchool : IPatchDb<School>, IReturn<IdResponse>
 {
@@ -89,9 +83,8 @@ public class UpdateSchool : IPatchDb<School>, IReturn<IdResponse>
     public GradeLevels GradeLevels { get; set; }
 }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
 [ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Schools"), Description("Delete a School")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteSchool : IDeleteDb<School>, IReturnVoid
 {

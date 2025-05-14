@@ -45,17 +45,13 @@ public enum EventType
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Find Events")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryEvent : QueryDb<Event> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Create a new Event")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
 {
@@ -72,9 +68,7 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
 }
 
 [ValidateHasRole(Roles.Committee)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Update an Event")]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
 {
@@ -90,9 +84,8 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
     public bool IsFacilitronConfirmed { get; set; }
 }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
 [ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Events"), Description("Delete an Event")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteEvent : IDeleteDb<Event>, IReturnVoid
 {

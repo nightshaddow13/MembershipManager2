@@ -23,17 +23,13 @@ public class EventSchool : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Find Event & School Links")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryEventSchool : QueryDb<EventSchool> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Link a School to an Event")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateEventSchool : ICreateDb<EventSchool>, IReturn<IdResponse>
 {
@@ -41,20 +37,8 @@ public class CreateEventSchool : ICreateDb<EventSchool>, IReturn<IdResponse>
     public int SchoolId { get; set; }
 }
 
-[ValidateHasRole(Roles.Committee)]
-[ValidateHasRole(Roles.MembershipChair)]
 [ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
-[AutoApply(Behavior.AuditModify)]
-public class UpdateEventSchool : IPatchDb<EventSchool>, IReturn<IdResponse>
-{
-    public int EventId { get; set; }
-    public int SchoolId { get; set; }
-}
-
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Units"), Description("Delete a link of a School to an Event")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteEventSchool : IDeleteDb<EventSchool>, IReturnVoid
 {

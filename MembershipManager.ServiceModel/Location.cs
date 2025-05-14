@@ -24,17 +24,13 @@ public class Location : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Shared"), Description("Find Locations")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryLocation : QueryDb<Location> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Shared"), Description("Create a new Location")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateLocation : ICreateDb<Location>, IReturn<IdResponse>
 {
@@ -44,9 +40,7 @@ public class CreateLocation : ICreateDb<Location>, IReturn<IdResponse>
 }
 
 [ValidateHasRole(Roles.Committee)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[Tag("Shared"), Description("Update a Location")]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateLocation : IPatchDb<Location>, IReturn<IdResponse>
 {
@@ -55,9 +49,8 @@ public class UpdateLocation : IPatchDb<Location>, IReturn<IdResponse>
     public int ZipCode { get; set; }
 }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
 [ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Shared"), Description("Delete a Location")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteLocation : IDeleteDb<Location>, IReturnVoid
 {
