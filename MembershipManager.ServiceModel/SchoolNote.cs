@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Note)]
 [UniqueConstraint(nameof(NoteId), nameof(SchoolId))]
 public class SchoolNote : AuditBase
 {
@@ -22,17 +23,13 @@ public class SchoolNote : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
+[Tag("Schools"), Description("Find Note & School Links")]
 [AutoApply(Behavior.AuditQuery)]
 public class QuerySchoolNote : QueryDb<SchoolNote> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Schools"), Description("Link a Note to a School")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateSchoolNote : ICreateDb<SchoolNote>, IReturn<IdResponse>
 {
@@ -40,20 +37,8 @@ public class CreateSchoolNote : ICreateDb<SchoolNote>, IReturn<IdResponse>
     public int SchoolId { get; set; }
 }
 
-[ValidateHasRole(Roles.Committee)]
 [ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
-[AutoApply(Behavior.AuditModify)]
-public class UpdateSchoolNote : IPatchDb<SchoolNote>, IReturn<IdResponse>
-{
-    public int NoteId { get; set; }
-    public int SchoolId { get; set; }
-}
-
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Schools"), Description("Delete a link of a Note to a School")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteSchoolNote : IDeleteDb<SchoolNote>, IReturnVoid
 {

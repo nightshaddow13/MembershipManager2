@@ -5,7 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
-[Icon(Svg = Icons.School)]
+[Icon(Svg = Icons.Unit)]
 [UniqueConstraint(nameof(UnitId), nameof(SchoolId))]
 public class UnitSchool : AuditBase
 {
@@ -31,12 +31,12 @@ public class UnitSchool : AuditBase
 
 #region Interactions
 
-[Tag("Units"), Description("Find School & Unit links")]
-[ValidateHasRole(Roles.Committee)]
+[Tag("Schools"), Description("Find School & Unit links")]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryUnitSchool : QueryDb<UnitSchool> { }
 
-[Tag("Units"), Description("Link a School to a Unit")]
+[Tag("Schools"), Description("Link a School to a Unit")]
 [ValidateHasRole(Roles.Committee)]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateUnitSchool : ICreateDb<UnitSchool>, IReturn<IdResponse>
@@ -45,7 +45,7 @@ public class CreateUnitSchool : ICreateDb<UnitSchool>, IReturn<IdResponse>
     public int SchoolId { get; set; }
 }
 
-[Tag("Units"), Description("Delete a link of a School to a Unit")]
+[Tag("Schools"), Description("Delete a link of a School to a Unit")]
 [ValidateHasRole(Roles.MembershipChair)]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteUnitSchool : IDeleteDb<UnitSchool>, IReturnVoid

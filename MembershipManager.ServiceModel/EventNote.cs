@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Note)]
 [UniqueConstraint(nameof(NoteId), nameof(EventId))]
 public class EventNote : AuditBase
 {
@@ -22,17 +23,13 @@ public class EventNote : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
+[Tag("Events"), Description("Find Event Notes")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryEventNote : QueryDb<EventNote> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Create a new Event Note")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateEventNote : ICreateDb<EventNote>, IReturn<IdResponse>
 {
@@ -41,9 +38,7 @@ public class CreateEventNote : ICreateDb<EventNote>, IReturn<IdResponse>
 }
 
 [ValidateHasRole(Roles.Committee)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[Tag("Events"), Description("Update an Event Note")]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateEventNote : IPatchDb<EventNote>, IReturn<IdResponse>
 {
@@ -51,9 +46,8 @@ public class UpdateEventNote : IPatchDb<EventNote>, IReturn<IdResponse>
     public int EventId { get; set; }
 }
 
-[ValidateHasRole(Roles.Admin)]
 [ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Events"), Description("Delete an Event Note")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteEventNote : IDeleteDb<EventNote>, IReturnVoid
 {

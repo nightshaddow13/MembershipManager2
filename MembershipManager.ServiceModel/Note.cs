@@ -6,6 +6,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Note)]
 public class Note : AuditBase
 {
     [AutoIncrement]
@@ -27,7 +28,8 @@ public class Note : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
+[Tag("Shared"), Description("Find Notes")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryNotes : QueryDb<Note> 
 {
@@ -35,6 +37,7 @@ public class QueryNotes : QueryDb<Note>
 }
 
 [ValidateHasRole(Roles.Committee)]
+[Tag("Shared"), Description("Create a new Note")]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateNote : ICreateDb<Note>, IReturn<IdResponse>
 {
@@ -42,6 +45,7 @@ public class CreateNote : ICreateDb<Note>, IReturn<IdResponse>
 }
 
 [ValidateHasRole(Roles.Committee)]
+[Tag("Shared"), Description("Update a Note")]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateNote : IPatchDb<Note>, IReturn<IdResponse>
 {
@@ -52,6 +56,7 @@ public class UpdateNote : IPatchDb<Note>, IReturn<IdResponse>
 }
 
 [ValidateHasRole(Roles.MembershipChair)]
+[Tag("Shared"), Description("Delete a Note")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteNote : IDeleteDb<Note>, IReturnVoid
 {

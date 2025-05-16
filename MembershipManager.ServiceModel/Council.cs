@@ -22,7 +22,7 @@ public class Council : AuditBase
 #region Interactions
 
 [Tag("Units"), Description("Find Councils")]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryCouncil : QueryDb<Council> { }
 

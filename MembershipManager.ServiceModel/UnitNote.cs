@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Note)]
 [UniqueConstraint(nameof(NoteId), nameof(UnitId))]
 public class UnitNote : AuditBase
 {
@@ -22,16 +23,12 @@ public class UnitNote : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
+[Tag("Units"), Description("Find Note & Unit Links")]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryUnitNote : QueryDb<UnitNote> { }
 
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[Tag("Units"), Description("Link a Note to a Unit")]
 [ValidateHasRole(Roles.Committee)]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateUnitNote : ICreateDb<UnitNote>, IReturn<IdResponse>
@@ -40,20 +37,8 @@ public class CreateUnitNote : ICreateDb<UnitNote>, IReturn<IdResponse>
     public int UnitId { get; set; }
 }
 
-[ValidateHasRole(Roles.Committee)]
+[Tag("Units"), Description("Delete a link of a Note to a Unit")]
 [ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
-[ValidateHasRole(Roles.Committee)]
-[AutoApply(Behavior.AuditModify)]
-public class UpdateUnitNote : IPatchDb<UnitNote>, IReturn<IdResponse>
-{
-    public int NoteId { get; set; }
-    public int UnitId { get; set; }
-}
-
-[ValidateHasRole(Roles.Admin)]
-[ValidateHasRole(Roles.MembershipChair)]
-[ValidateHasRole(Roles.CouncilExecutive)]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteUnitNote : IDeleteDb<UnitNote>, IReturnVoid
 {
