@@ -6,6 +6,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Note)]
 public class Note : AuditBase
 {
     [AutoIncrement]
@@ -27,7 +28,7 @@ public class Note : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Shared"), Description("Find Notes")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryNotes : QueryDb<Note> 

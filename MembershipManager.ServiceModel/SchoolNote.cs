@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Note)]
 [UniqueConstraint(nameof(NoteId), nameof(SchoolId))]
 public class SchoolNote : AuditBase
 {
@@ -22,7 +23,7 @@ public class SchoolNote : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Schools"), Description("Find Note & School Links")]
 [AutoApply(Behavior.AuditQuery)]
 public class QuerySchoolNote : QueryDb<SchoolNote> { }
@@ -36,7 +37,7 @@ public class CreateSchoolNote : ICreateDb<SchoolNote>, IReturn<IdResponse>
     public int SchoolId { get; set; }
 }
 
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [Tag("Schools"), Description("Delete a link of a Note to a School")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteSchoolNote : IDeleteDb<SchoolNote>, IReturnVoid

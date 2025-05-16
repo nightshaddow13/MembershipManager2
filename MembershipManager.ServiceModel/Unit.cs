@@ -52,7 +52,7 @@ public enum Sex
 #region Interactions
 
 [Tag("Units"), Description("Find Units")]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryUnits : QueryDb<Unit> { }
 

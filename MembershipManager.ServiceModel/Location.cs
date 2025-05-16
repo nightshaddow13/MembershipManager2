@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Location)]
 public class Location : AuditBase
 {
     [AutoIncrement]
@@ -24,7 +25,7 @@ public class Location : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Shared"), Description("Find Locations")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryLocation : QueryDb<Location> { }
@@ -49,7 +50,7 @@ public class UpdateLocation : IPatchDb<Location>, IReturn<IdResponse>
     public int ZipCode { get; set; }
 }
 
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [Tag("Shared"), Description("Delete a Location")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteLocation : IDeleteDb<Location>, IReturnVoid

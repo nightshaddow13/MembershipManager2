@@ -45,7 +45,7 @@ public enum EventType
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Events"), Description("Find Events")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryEvent : QueryDb<Event> { }
@@ -84,7 +84,7 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
     public bool IsFacilitronConfirmed { get; set; }
 }
 
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [Tag("Events"), Description("Delete an Event")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteEvent : IDeleteDb<Event>, IReturnVoid

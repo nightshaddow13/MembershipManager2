@@ -26,7 +26,7 @@ public class District : AuditBase
 #region Interactions
 
 [Tag("Units"), Description("Find Districts")]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryDistrict : QueryDb<District> { }
 

@@ -23,7 +23,7 @@ public class EventSchool : AuditBase
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Events"), Description("Find Event & School Links")]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryEventSchool : QueryDb<EventSchool> { }
@@ -37,7 +37,7 @@ public class CreateEventSchool : ICreateDb<EventSchool>, IReturn<IdResponse>
     public int SchoolId { get; set; }
 }
 
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [Tag("Units"), Description("Delete a link of a School to an Event")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteEventSchool : IDeleteDb<EventSchool>, IReturnVoid

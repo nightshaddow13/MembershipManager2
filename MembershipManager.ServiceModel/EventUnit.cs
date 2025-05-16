@@ -26,7 +26,7 @@ public class EventUnit : AuditBase
 #region Interactions
 
 [Tag("Events"), Description("Find Event & Unit links")]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryEventUnit : QueryDb<EventUnit> { }
 

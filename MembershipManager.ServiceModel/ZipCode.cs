@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.Location)]
 public class ZipCode : AuditBase
 {
     public int Id { get; set; }
@@ -25,12 +26,12 @@ public enum State
 #region Interactions
 
 [Tag("Shared"), Description("Find Zip Codes")]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
 public class QueryZipCode : QueryDb<ZipCode> { }
 
 [Tag("Shared"), Description("Create a new Zip Code")]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [AutoApply(Behavior.AuditCreate)]
 public class CreateZipCode : ICreateDb<ZipCode>, IReturn<IdResponse>
 {
@@ -42,7 +43,7 @@ public class CreateZipCode : ICreateDb<ZipCode>, IReturn<IdResponse>
 }
 
 [Tag("Shared"), Description("Update a Zip Code")]
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.MembershipChair)]
 [AutoApply(Behavior.AuditModify)]
 public class UpdateZipCode : IPatchDb<ZipCode>, IReturn<IdResponse>
 {
@@ -53,7 +54,7 @@ public class UpdateZipCode : IPatchDb<ZipCode>, IReturn<IdResponse>
 }
 
 [Tag("Shared"), Description("Delete a Zip Code")]
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteZipCode : IDeleteDb<ZipCode>, IReturnVoid
 {

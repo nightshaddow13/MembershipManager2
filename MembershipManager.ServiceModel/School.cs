@@ -5,6 +5,7 @@ namespace MembershipManager.ServiceModel;
 
 #region Base definition
 
+[Icon(Svg = Icons.School)]
 public class School : AuditBase
 {
     [AutoIncrement]
@@ -51,7 +52,7 @@ public enum SchoolType
 
 #region Interactions
 
-[ValidateHasRole(Roles.Committee)]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Schools"), Description("Find Schools")]
 [AutoApply(Behavior.AuditQuery)]
 public class QuerySchool : QueryDb<School> { }
@@ -83,7 +84,7 @@ public class UpdateSchool : IPatchDb<School>, IReturn<IdResponse>
     public GradeLevels GradeLevels { get; set; }
 }
 
-[ValidateHasRole(Roles.CouncilExecutive)]
+[ValidateHasRole(Roles.MembershipChair)]
 [Tag("Schools"), Description("Delete a School")]
 [AutoApply(Behavior.AuditSoftDelete)]
 public class DeleteSchool : IDeleteDb<School>, IReturnVoid
