@@ -26,6 +26,9 @@ export default () => {
                 <nav className="relative flex flex-grow leading-6 font-semibold text-slate-700 dark:text-slate-200">
                     <ul className="flex flex-wrap items-center justify-end w-full m-0">
                         <li className="relative flex flex-wrap just-fu-start m-0">
+                            <NavLink to="/units" className={navClass}>Units</NavLink>
+                        </li>
+                        <li className="relative flex flex-wrap just-fu-start m-0">
                             <NavLink to="/counter" className={navClass}>Counter</NavLink>
                         </li>
                         <li className="relative flex flex-wrap just-fu-start m-0">

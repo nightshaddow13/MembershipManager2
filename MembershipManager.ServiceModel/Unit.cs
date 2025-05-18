@@ -52,9 +52,14 @@ public enum Sex
 #region Interactions
 
 [Tag("Units"), Description("Find Units")]
+[Route("/units", "GET")]
+[Route("/units/{Id}", "GET")]
 [ValidateHasRole(Roles.NewMemberCoordinator)]
 [AutoApply(Behavior.AuditQuery)]
-public class QueryUnits : QueryDb<Unit> { }
+public class QueryUnits : QueryDb<Unit>
+{
+    public int? Id { get; set; }
+}
 
 [Tag("Units"), Description("Create a new Unit")]
 [ValidateHasRole(Roles.MembershipChair)]
