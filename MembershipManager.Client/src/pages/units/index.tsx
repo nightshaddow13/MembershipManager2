@@ -2,23 +2,36 @@ import { useEffect, useState } from "react";
 import Page from "@/components/LayoutPage";
 import { ValidateAuth } from "@/useAuth";
 
+import Create from "./Create"
 import { Unit, QueryUnits, District } from "@/dtos";
 import { useClient } from "@/gateway";
-import DataTable, { columnDefs, getCoreRowModel } from "@/components/DataTable";
+import { DataTable, columnDefs, getCoreRowModel } from "@/components/DataTable";
+import { Button } from "@/components/ui/button"
 
 function Index() {
 
     const client = useClient();
-    const [newUnit, SetNewUnit] = useState<boolean>(false)
+    const [newUnit, setNewUnit] = useState<boolean>(false)
     const [units, setUnits] = useState<Unit[]>([])
     useEffect(() => {
         (async () => await refreshUnits())()
     }, [])
 
-    const columns = columnDefs(['district', 'type', 'sex', 'number'],
+    const columns = columnDefs(['district', 'sex', 'type', 'number'],
         ({ district }) => {
             district.cell = ({getValue}) => <>{(getValue() as District).description}</>
     })
+
+    const reset = (args: { newUnit?: boolean, editUnitId?: number } = {}) => {
+        setNewUnit(args.newUnit ?? false)
+        setRowSelection({})
+    }
+
+    const onDone = async () => reset()
+    const onSave = async () => {
+        onDone()
+        await refreshUnits()
+    }
 
     const refreshUnits = async () => {
         const api = await client.api(new QueryUnits())
@@ -26,9 +39,20 @@ function Index() {
             setUnits(api.response!.results ?? [])
         }
     }
+    const [rowSelection, setRowSelection] = useState({})
+    const selectedIndex = parseInt(Object.keys(rowSelection)[0])
+    const selectedRow = !isNaN(selectedIndex)
+        ? units[selectedIndex]
+        : null
 
     return(<Page title="Unit Management">
-        <DataTable columns={columns} data={units} getCoreRowModel={getCoreRowModel()} />
+        <div className="mt-4 flex flex-col">
+            <div className="my-2">
+                <Button variant="outline" onClick={() => setNewUnit(true)}>New Unit</Button>
+            </div>
+            <DataTable columns={columns} data={units} getCoreRowModel={getCoreRowModel()} />
+            <Create open={newUnit} onDone={onDone} onSave={onSave} />
+        </div>
     </Page>)
 }
 
