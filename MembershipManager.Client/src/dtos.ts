@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-05-16 19:12:35
+Date: 2025-05-18 17:46:52
 Version: 8.72
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -1068,9 +1068,12 @@ export class QuerySchoolNote extends QueryDb<SchoolNote> implements IReturn<Quer
 }
 
 /** @description Find Units */
+// @Route("/units", "GET")
+// @Route("/units/{Id}", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
 export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
 {
+    public id?: number;
 
     public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QueryUnits'; }

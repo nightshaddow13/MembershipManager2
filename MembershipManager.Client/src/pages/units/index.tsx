@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Page from "@/components/LayoutPage";
-import { ValidateAuth } from "@/useAuth";
+import { useAuth, ValidateAuth } from "@/useAuth";
 
 import Create from "./Create"
+import Edit from "./Edit"
 import { Unit, QueryUnits, District } from "@/dtos";
 import { useClient } from "@/gateway";
 import { DataTable, columnDefs, getCoreRowModel } from "@/components/DataTable";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button"
 function Index() {
 
     const client = useClient();
+    const { hasRole } = useAuth()
     const [newUnit, setNewUnit] = useState<boolean>(false)
     const [units, setUnits] = useState<Unit[]>([])
     useEffect(() => {
@@ -47,11 +49,15 @@ function Index() {
 
     return(<Page title="Unit Management">
         <div className="mt-4 flex flex-col">
-            <div className="my-2">
-                <Button variant="outline" onClick={() => setNewUnit(true)}>New Unit</Button>
-            </div>
-            <DataTable columns={columns} data={units} getCoreRowModel={getCoreRowModel()} />
+            {!hasRole('MembershipChair') ? null :                          
+                <div className="my-2">
+                    <Button variant="outline" onClick={() => setNewUnit(true)}>New Unit</Button>
+                </div>}
+            <DataTable columns={columns} data={units} getCoreRowModel={getCoreRowModel()} state={{rowSelection}}
+                       enableRowSelection={true} enableMultiRowSelection={false}
+                       onRowSelectionChange={setRowSelection} />
             <Create open={newUnit} onDone={onDone} onSave={onSave} />
+            <Edit id={selectedRow?.id} onDone={onDone} onSave={onSave} />
         </div>
     </Page>)
 }
