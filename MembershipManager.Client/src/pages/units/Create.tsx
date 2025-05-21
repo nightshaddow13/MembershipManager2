@@ -1,4 +1,4 @@
-import { ErrorSummary, SelectInput, TextAreaInput, TextInput } from "@/components/Form"
+import { ErrorSummary, SelectInput, TextInput } from "@/components/Form"
 import { SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { CreateUnit, Sex, UnitType } from "@/dtos";
 import { useApp, useClient } from "@/gateway.ts";
