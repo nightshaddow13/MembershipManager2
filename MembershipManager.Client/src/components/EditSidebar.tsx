@@ -1,4 +1,4 @@
-import { IReturn, IdResponse } from "@/dtos"
+import { IReturn, IReturnVoid, IdResponse, QueryResponse } from "@/dtos"
 import { useClient } from "@/gateway"
 import { sanitizeForUi } from "@/utils"
 import { useState, useEffect, FormEvent, ChangeEvent, JSX } from "react"
@@ -14,32 +14,38 @@ import { ConfirmDelete, ErrorSummary, SelectInput, TextInput } from "@/component
 import { Button } from "@/components/ui/button"
 import SrcPage from "@/components/SrcPage.tsx"
 import { useAuth } from "@/useAuth"
-import { EditSidebarOptions, InputType } from "@/types"
+import { FormInput, InputType } from "@/types"
 
 
 type Props = {
-    options: EditSidebarOptions,
+    visibleFields: string
+    typeName: string
     id?: number
+    inputs: FormInput[]
     onDone: () => void
     onSave: () => void
+    instance: () => IReturn<IdResponse>
+    query: (dto: Partial<any>) => IReturn<QueryResponse<any>>
+    update: (dto: Partial<any>) => IReturn<IdResponse>
+    delete_: (dto: Partial<any>) => IReturnVoid
 }
 
-function editSidebar<TEdit>({options, id, onDone, onSave }: Props): JSX.Element {
+function editSidebar<TEdit>({visibleFields, typeName, id, inputs, onDone, onSave, instance, query, update, delete_ }: Props): JSX.Element {
     
     const client = useClient()
     const { loading } = client
     const { hasRole } = useAuth()
 
     const [editUnit, setEditUnit] = useState<TEdit | null>(null)
-    const [request, setRequest] = useState(options.createInstance)
+    const [request, setRequest] = useState(instance)
 
     useEffect(() => {
         (async () => {
             if (id) {
-                const api = await client.api(options.query({id}))
+                const api = await client.api(query({id}))
                 const dto = api.response ? api.response.results[0] : null
                 setEditUnit(dto)
-                if (dto) setRequest(options.update(sanitizeForUi({... dto})))
+                if (dto) setRequest(update(sanitizeForUi({... dto})))
             } else {
                 setEditUnit(null)
             }
@@ -55,13 +61,13 @@ function editSidebar<TEdit>({options, id, onDone, onSave }: Props): JSX.Element 
         if (api.succeeded) (onSave ?? onDone)()
     }
     async function onDelete() {
-        const api = await client.apiVoid(options.delete({id}))
+        const api = await client.apiVoid(delete_({id}))
         if (api.succeeded) (onSave ?? onDone)()
     }
     function change(f: (dto: IReturn<IdResponse>, value: string) => void) {
         return (e: ChangeEvent<HTMLInputElement>) => {
             f(request, e.target.value)
-            setRequest(options.update(request))
+            setRequest(update(request))
         }
     }
 
@@ -69,15 +75,15 @@ function editSidebar<TEdit>({options, id, onDone, onSave }: Props): JSX.Element 
         <Sheet open={editUnit != null} onOpenChange={onDone}>
             <SheetContent className="w-screen xl:max-w-3xl md:max-w-xl max-w-lg">
                 <SheetHeader>
-                    <SheetTitle>Edit {options.typeName}</SheetTitle>
+                    <SheetTitle>Edit {typeName}</SheetTitle>
                 </SheetHeader>
                 {!editUnit ? null :
                     <form className="grid gap-4 py-4" onSubmit={onSubmit}>
                         <input className="hidden" type="submit"/>
                         <fieldset disabled={loading}>
-                            <ErrorSummary except={options.visibleFields} className="mb-4"/>
+                            <ErrorSummary except={visibleFields} className="mb-4"/>
                             <div className="grid grid-cols-6 gap-6">
-                                {options.inputs.map((input) => (
+                                {inputs.map((input) => (
                                     <div className="col-span-6 sm:col-span-3">
                                     {(() => {
                                         switch (input.type) {
@@ -103,9 +109,6 @@ function editSidebar<TEdit>({options, id, onDone, onSave }: Props): JSX.Element 
                             ))}
                             </div>
                         </fieldset>
-                        <div className="flex justify-center">
-                            <SrcPage path="bookings-crud/Edit.tsx" />
-                        </div>
                     </form>}
                 <SheetFooter>
                     <div

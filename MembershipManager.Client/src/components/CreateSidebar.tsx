@@ -5,21 +5,25 @@ import { Sheet } from "@/components/ui/sheet";
 import { ChangeEvent, FormEvent, JSX, useState } from "react";
 import { ApiContext } from "@/components/Form"
 import { Button } from "@/components/ui/button.tsx";
-import { CreateSidebarOptions, InputType } from "@/types";
+import { FormInput, InputType } from "@/types";
 import { IdResponse, IReturn } from "@/dtos";
 
 type Props = {
-    options: CreateSidebarOptions
+    visibleFields: string
+    typeName: string
     open: boolean
+    inputs: FormInput[]
     onDone: () => void
     onSave?: () => void
+    instance: () => IReturn<IdResponse>
+    create: (request: any) => IReturn<IdResponse>
 }
 
-function createSidebar({options, open, onDone, onSave}: Props): JSX.Element {
+function createSidebar({visibleFields, typeName, open, inputs, onDone, onSave, instance, create}: Props): JSX.Element {
     const client = useClient()
     const { loading, clearErrors } = client
 
-    const newInstance = options.createInstance
+    const newInstance = instance
     const [request, setRequest] = useState(newInstance())
 
     function close() {
@@ -41,7 +45,7 @@ function createSidebar({options, open, onDone, onSave}: Props): JSX.Element {
     function change(f: (dto: IReturn<IdResponse>, value: string) => void) {
         return (e : ChangeEvent<HTMLInputElement>) => {
             f(request, e.target.value)
-            setRequest(options.createDto(request))
+            setRequest(create(request))
         }
     }
 
@@ -49,14 +53,14 @@ function createSidebar({options, open, onDone, onSave}: Props): JSX.Element {
         <Sheet open={open} onOpenChange={close}>
             <SheetContent className="w-screen xl:max-w-3xl md:max-w-xl max-w-lg">
                 <SheetHeader>
-                    <SheetTitle>New {options.typeName}</SheetTitle>
+                    <SheetTitle>New {typeName}</SheetTitle>
                 </SheetHeader>
                 <form className="grid gap-4 py-4" onSubmit={onSubmit}>
                     <input className="hidden" type="submit"/>
                     <fieldset disabled={loading}>
-                        <ErrorSummary except={options.visibleFields} className="mb-4" />
+                        <ErrorSummary except={visibleFields} className="mb-4" />
                         <div className="grid grid-cols-6 gap-6">
-                            {options.inputs.map((input) => (
+                            {inputs.map((input) => (
                                  <div className="col-span-6 sm:col-span-3">
                                     {(() => {
                                         switch (input.type) {

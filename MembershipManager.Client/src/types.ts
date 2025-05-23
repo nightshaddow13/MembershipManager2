@@ -85,58 +85,6 @@ export type FormInput = {
     onChange: (dto: any, value: string) => void
 }
 
-/**
- * Options for the createSidebar component
- */
-export type CreateSidebarOptions = {
-    /** Fields visible for error handling */
-    visibleFields: string
-
-    typeName: string
-
-    /**
-     * 
-     * @returns new default instance
-     */
-    createInstance: () => IReturn<IdResponse>
-
-    /** Create a new Dto */
-    createDto: (request: any) => IReturn<IdResponse>
-
-    /** Inputs required by the form */
-    inputs: FormInput[]
-}
-
-/**
- * Options for the editSidebar component
- */
-export type EditSidebarOptions = {
-    /** Fields visible for error handling */
-    visibleFields: string
-
-    typeName: string
-
-    /**
-     * 
-     * @returns new default instance
-     */
-    createInstance: () => IReturn<IdResponse>
-
-    /**
-     * 
-     * @param dto dto for the query request
-     * @returns data from query
-     */
-    query: (dto: Partial<any>) => IReturn<QueryResponse<any>>
-
-    update: (dto: Partial<any>) => IReturn<IdResponse>
-
-    delete: (dto: Partial<any>) => IReturnVoid
-
-    /** Inputs required by the form */
-    inputs: FormInput[]
-}
-
 export interface IResponseError {
     errorCode?: string;
     fieldName?: string;

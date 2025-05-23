@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import CreateSidebar from "@/components/CreateSidebar";
 import { EditSidebarOptions, CreateSidebarOptions, FormInput, InputType } from "@/types";
 import EditSidebar from "@/components/EditSidebar";
+import EditTable from "@/components/EditTable";
 
 function Index() {
     const app = useApp()
@@ -74,15 +75,12 @@ function Index() {
                 onChange: (dto: CreateUnit, value: string) => {dto.number = Number(value);}
             }
         ]
-    const createOptions: CreateSidebarOptions = {
-        visibleFields: "district,sex,type,number",
-        typeName: "Unit",
-        createInstance: () => new CreateUnit({
-                districtId: 1
-            }),
-        createDto: (request) => new CreateUnit(request),
-        inputs: createInputs
-    }
+    const createInstance = () => new CreateUnit({ districtId: 1 })
+    const editInstance = () => new UpdateUnit()
+    const create= (request: any) => new CreateUnit(request)
+    const query = (dto: Partial<QueryUnits>) => new QueryUnits(dto)
+    const update = (dto: Partial<UpdateUnit>) => new UpdateUnit(dto)
+    const delete_ = (dto: Partial<DeleteUnit>) => new DeleteUnit(dto)
 
     const editInputs: FormInput[] = [
             {
@@ -93,15 +91,6 @@ function Index() {
                 onChange: (dto: UpdateUnit, value: string) => {dto.sex = value as Sex;}
             }
         ]
-    const editOptions: EditSidebarOptions = {
-        visibleFields: "sex",
-        typeName: "Unit",
-        createInstance: () => new UpdateUnit(),
-        query: (dto: Partial<QueryUnits>) => new QueryUnits(dto),
-        update: (dto: Partial<UpdateUnit>) => new UpdateUnit(dto),
-        delete: (dto: Partial<DeleteUnit>) => new DeleteUnit(dto),
-        inputs: editInputs
-    }
 
     return(<Page title="Unit Management">
         <div className="mt-4 flex flex-col">
@@ -112,8 +101,29 @@ function Index() {
             <DataTable columns={columns} data={units} getCoreRowModel={getCoreRowModel()} state={{rowSelection}}
                        enableRowSelection={true} enableMultiRowSelection={false}
                        onRowSelectionChange={setRowSelection} />
-            <CreateSidebar options={createOptions} open={newUnit} onDone={onDone} onSave={onSave} />
-            <EditSidebar options={editOptions} id={selectedRow?.id} onDone={onDone} onSave={onSave} />
+            <CreateSidebar 
+                visibleFields="district,sex,type,number" 
+                typeName="Unit" 
+                open={newUnit}
+                inputs={createInputs} 
+                onDone={onDone} 
+                onSave={onSave}
+                instance={createInstance}
+                create={create} />
+            <EditSidebar 
+                visibleFields="sex"
+                typeName="Unit" 
+                id={selectedRow?.id}
+                inputs={editInputs} 
+                onDone={onDone} 
+                onSave={onSave}
+                instance={editInstance}
+                query={query}
+                update={update}
+                delete_={delete_} />
+        </div>
+        <div>
+            
         </div>
     </Page>)
 }
