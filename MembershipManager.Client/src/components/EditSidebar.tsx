@@ -18,7 +18,6 @@ import { FormInput, InputType } from "@/types"
 
 
 type Props = {
-    visibleFields: string
     typeName: string
     id?: number
     inputs: FormInput[]
@@ -30,7 +29,7 @@ type Props = {
     delete_: (dto: Partial<any>) => IReturnVoid
 }
 
-function editSidebar<TEdit>({visibleFields, typeName, id, inputs, onDone, onSave, instance, query, update, delete_ }: Props): JSX.Element {
+function editSidebar<TEdit>({typeName, id, inputs, onDone, onSave, instance, query, update, delete_ }: Props): JSX.Element {
     
     const client = useClient()
     const { loading } = client
@@ -38,6 +37,7 @@ function editSidebar<TEdit>({visibleFields, typeName, id, inputs, onDone, onSave
 
     const [editUnit, setEditUnit] = useState<TEdit | null>(null)
     const [request, setRequest] = useState(instance)
+    const visibleFields = inputs.map(i => i.id).join(",");
 
     useEffect(() => {
         (async () => {

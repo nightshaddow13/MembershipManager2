@@ -9,7 +9,6 @@ import { FormInput, InputType } from "@/types";
 import { IdResponse, IReturn } from "@/dtos";
 
 type Props = {
-    visibleFields: string
     typeName: string
     open: boolean
     inputs: FormInput[]
@@ -19,12 +18,13 @@ type Props = {
     create: (request: any) => IReturn<IdResponse>
 }
 
-function createSidebar({visibleFields, typeName, open, inputs, onDone, onSave, instance, create}: Props): JSX.Element {
+function createSidebar({typeName, open, inputs, onDone, onSave, instance, create}: Props): JSX.Element {
     const client = useClient()
     const { loading, clearErrors } = client
 
     const newInstance = instance
     const [request, setRequest] = useState(newInstance())
+    const visibleFields = inputs.map(i => i.id).join(",");
 
     function close() {
         setRequest(newInstance())
