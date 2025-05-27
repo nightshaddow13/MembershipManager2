@@ -1,4 +1,5 @@
-﻿using ServiceStack;
+﻿using MembershipManager.ServiceModel.Enum;
+using ServiceStack;
 using ServiceStack.DataAnnotations;
 
 namespace MembershipManager.ServiceModel;
@@ -15,8 +16,10 @@ public class Event : AuditBase
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
 
-    [ForeignKey(typeof(Location))]
-    public int LocationId { get; set; }
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public State State { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
 
     public bool IsConfirmed { get; set; }
     public bool AreFlyersOrdered { get; set; }
@@ -59,7 +62,13 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
     public EventType EventType { get; set; }
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
-    public int LocationId { get; set; }
+
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+
+    [ApiAllowableValues(typeof(State))]
+    public State State { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
 
     public bool IsConfirmed { get; set; }
     public bool AreFlyersOrdered { get; set; }
@@ -76,7 +85,10 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
     public EventType EventType { get; set; }
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
-    public int LocationId { get; set; }
+
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string ZipCode { get; set; } = string.Empty;
 
     public bool IsConfirmed { get; set; }
     public bool AreFlyersOrdered { get; set; }

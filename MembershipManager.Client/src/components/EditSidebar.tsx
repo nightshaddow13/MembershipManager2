@@ -93,7 +93,7 @@ function editSidebar<TEdit>({typeName, id, inputs, onDone, onSave, instance, que
                                                             type="number"  
                                                             min={input.min} 
                                                             required={input.required}
-                                                            defaultValue={input.value}
+                                                            defaultValue={input.value(request)}
                                                             onChange={change(input.onChange)} />
                                                 )
                                             case InputType.Select:
@@ -102,6 +102,12 @@ function editSidebar<TEdit>({typeName, id, inputs, onDone, onSave, instance, que
                                                             options={input.options} 
                                                             value={input.value(request)} 
                                                             onChange={change(input.onChange)} />
+                                                )
+                                            case InputType.TextInput:
+                                                return(
+                                                    <TextInput id={input.id}
+                                                        value={input.value(request)}
+                                                        onChange={change(input.onChange)} />
                                                 )
                                         }
                                     })()}

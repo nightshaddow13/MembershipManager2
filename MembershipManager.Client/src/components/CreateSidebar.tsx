@@ -70,7 +70,7 @@ function createSidebar({typeName, open, inputs, onDone, onSave, instance, create
                                                             type="number"  
                                                             min={input.min} 
                                                             required={input.required}
-                                                            defaultValue={input.value}
+                                                            defaultValue={input.value(request)}
                                                             onChange={change(input.onChange)} />
                                                 )
                                             case InputType.Select:
@@ -79,6 +79,12 @@ function createSidebar({typeName, open, inputs, onDone, onSave, instance, create
                                                             options={input.options} 
                                                             value={input.value(request)} 
                                                             onChange={change(input.onChange)} />
+                                                )
+                                            case InputType.TextInput:
+                                                return(
+                                                    <TextInput id={input.id}
+                                                        defaultValue={input.value(request)}
+                                                        onChange={change(input.onChange)} />
                                                 )
                                         }
                                     })()}

@@ -71,7 +71,8 @@ export type ModalProvider = {
 export enum InputType
 {
     Select,
-    NumberInput
+    NumberInput,
+    TextInput
 }
 
 export type FormInput = {

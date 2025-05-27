@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 type Props<TThing> = {
     createRole: string
+    typeName: string
     columns: ColumnDef<unknown>[]
     createInputs: FormInput[]
     editInputs: FormInput[]
@@ -24,7 +25,7 @@ type Props<TThing> = {
     getId: (dto: TThing | null) => number | undefined
 }
 
-function EditTable<TThing>({createRole, columns, createInputs, editInputs, createInstance, editInstance, query, create, update, delete_, getId}: Props<TThing>) {
+function EditTable<TThing>({createRole, typeName, columns, createInputs, editInputs, createInstance, editInstance, query, create, update, delete_, getId}: Props<TThing>) {
 
     const client = useClient();
     
@@ -68,7 +69,7 @@ function EditTable<TThing>({createRole, columns, createInputs, editInputs, creat
                        enableRowSelection={true} enableMultiRowSelection={false}
                        onRowSelectionChange={setRowSelection} />
             <CreateSidebar 
-                typeName="Unit" 
+                typeName={typeName}
                 open={newThing}
                 inputs={createInputs} 
                 onDone={onDone} 
@@ -76,7 +77,7 @@ function EditTable<TThing>({createRole, columns, createInputs, editInputs, creat
                 instance={createInstance}
                 create={create} />
             <EditSidebar 
-                typeName="Unit" 
+                typeName={typeName}
                 id = {getId(selectedRow)}
                 inputs={editInputs} 
                 onDone={onDone} 

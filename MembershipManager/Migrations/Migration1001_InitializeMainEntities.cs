@@ -1,3 +1,4 @@
+using MembershipManager.ServiceModel.Enum;
 using ServiceStack.DataAnnotations;
 using ServiceStack.OrmLite;
 
@@ -80,45 +81,11 @@ public class Migration1001_InitializeMainEntities : MigrationBase
 
     #endregion
 
-    #region Zip Code / Location
-    
-    enum State
-    {
-        FL
-    }
-
-    class ZipCode : AuditBase
-    {
-        public int Id { get; set; }
-        public string City { get; set; } = string.Empty;
-        public State State { get; set; } = State.FL;
-
-        [Reference]
-        public List<Location> Locations { get; set; } = [];
-    }
-
-    class Location : AuditBase
-    {
-        [AutoIncrement]
-        public int Id { get; set; }
-
-        public string Description { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-
-        [ForeignKey(typeof(ZipCode))]
-        public int ZipCode { get; set; }
-
-        [Reference]
-        public List<School> Schools { get; set; } = [];
-    }
-
-    #endregion
-
     #region School
 
     enum GradeLevels
     {
-        gKG_5 = 1,
+        gKG_5,
         gKG_8,
         gKG_12,
         gPK_5,
@@ -142,11 +109,13 @@ public class Migration1001_InitializeMainEntities : MigrationBase
 
         public string Description { get; set; } = string.Empty;
 
-        [ForeignKey(typeof(Location))]
-        public int LocationId { get; set; }
-
         public SchoolType SchoolType { get; set; }
         public GradeLevels GradeLevels { get; set; }
+
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public State State { get; set; }
+        public string ZipCode { get; set; } = string.Empty;
 
         [Reference]
         public List<EventSchool> EventsLink { get; set; } = [];
@@ -179,8 +148,10 @@ public class Migration1001_InitializeMainEntities : MigrationBase
         public string Description { get; set; } = string.Empty;
         public DateTime DateTime { get; set; }
 
-        [ForeignKey(typeof(Location))]
-        public int LocationId { get; set; }
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public State State { get; set; }
+        public string ZipCode { get; set; } = string.Empty;
 
         public bool IsConfirmed { get; set; }
         public bool AreFlyersOrdered { get; set; }
@@ -317,8 +288,6 @@ public class Migration1001_InitializeMainEntities : MigrationBase
         Db.CreateTable<Council>();
         Db.CreateTable<District>();
         Db.CreateTable<Unit>();
-        Db.CreateTable<ZipCode>();
-        Db.CreateTable<Location>();
         Db.CreateTable<School>();
         Db.CreateTable<Event>();
         Db.CreateTable<EventSchool>();
@@ -341,8 +310,6 @@ public class Migration1001_InitializeMainEntities : MigrationBase
         Db.DropTable<EventSchool>();
         Db.DropTable<Event>();
         Db.DropTable<School>();
-        Db.DropTable<Location>();
-        Db.DropTable<ZipCode>();
         Db.DropTable<Unit>();
         Db.DropTable<District>();
         Db.DropTable<Council>();
