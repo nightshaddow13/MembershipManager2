@@ -1,3 +1,5 @@
+import { IdResponse, QueryResponse } from "./dtos"
+
 export type Author = {
     name: string
     picture: string
@@ -64,6 +66,24 @@ export type AutoQueryGridDefaults = {
 }
 export type ModalProvider = {
     openModal: (info:{name:string} & any, done:(result:any) => any) => void
+}
+
+export enum InputType
+{
+    Select,
+    NumberInput,
+    TextInput
+}
+
+export type FormInput = {
+    type: InputType
+    id: string
+    value: (dto: any) => any
+    options?: {[key: string]: any}
+    required?: boolean
+    min?: number
+    defaultValue?: any
+    onChange: (dto: any, value: string) => void
 }
 
 export interface IResponseError {

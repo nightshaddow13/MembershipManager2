@@ -1,5 +1,7 @@
-﻿using ServiceStack;
+﻿using MembershipManager.ServiceModel.Enum;
+using ServiceStack;
 using ServiceStack.DataAnnotations;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MembershipManager.ServiceModel;
 
@@ -12,12 +14,14 @@ public class School : AuditBase
     public int Id { get; set; }
 
     public string Description { get; set; } = string.Empty;
-
-    [ForeignKey(typeof(Location))]
-    public int LocationId { get; set; }
-
+    
     public SchoolType SchoolType { get; set; }
     public GradeLevels GradeLevels { get; set; }
+
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public State State { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
 
     [Reference]
     public List<EventSchool> EventsLink { get; set; } = [];
@@ -31,7 +35,7 @@ public class School : AuditBase
 
 public enum GradeLevels
 {
-    gKG_5 = 1,
+    gKG_5,
     gKG_8,
     gKG_12,
     gPK_5,
@@ -63,13 +67,19 @@ public class QuerySchool : QueryDb<School> { }
 public class CreateSchool : ICreateDb<School>, IReturn<IdResponse>
 {
     public string Description { get; set; } = string.Empty;
-    public int LocationId { get; set; }
 
     [ApiAllowableValues(typeof(SchoolType))]
     public SchoolType SchoolType { get; set; }
 
     [ApiAllowableValues(typeof(GradeLevels))]
     public GradeLevels GradeLevels { get; set; }
+
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+
+    [ApiAllowableValues(typeof(State))]
+    public State State { get; set; }
+    public string ZipCode { get; set; } = string.Empty;
 }
 
 [ValidateHasRole(Roles.Committee)]
@@ -77,11 +87,15 @@ public class CreateSchool : ICreateDb<School>, IReturn<IdResponse>
 [AutoApply(Behavior.AuditModify)]
 public class UpdateSchool : IPatchDb<School>, IReturn<IdResponse>
 {
+    public int Id { get; set; }
     public string Description { get; set; } = string.Empty;
-    public int LocationId { get; set; }
 
     [ApiAllowableValues(typeof(GradeLevels))]
     public GradeLevels GradeLevels { get; set; }
+
+    public string Address { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string ZipCode { get; set; } = string.Empty;
 }
 
 [ValidateHasRole(Roles.MembershipChair)]

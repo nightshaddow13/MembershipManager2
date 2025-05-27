@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-05-18 17:46:52
+Date: 2025-05-26 21:42:24
 Version: 8.72
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -205,15 +205,20 @@ export enum SchoolType
 
 export enum GradeLevels
 {
-    gKG_5 = 1,
-    gKG_8 = 2,
-    gKG_12 = 3,
-    gPK_5 = 4,
-    gPK_8 = 5,
-    gPK_12 = 6,
-    g6_8 = 7,
-    g6_12 = 8,
-    g9_12 = 9,
+    gKG_5 = 'gKG_5',
+    gKG_8 = 'gKG_8',
+    gKG_12 = 'gKG_12',
+    gPK_5 = 'gPK_5',
+    gPK_8 = 'gPK_8',
+    gPK_12 = 'gPK_12',
+    g6_8 = 'g6_8',
+    g6_12 = 'g6_12',
+    g9_12 = 'g9_12',
+}
+
+export enum State
+{
+    FL = 'FL',
 }
 
 export class EventSchool extends AuditBase
@@ -238,9 +243,12 @@ export class School extends AuditBase
 {
     public id: number;
     public description: string;
-    public locationId: number;
     public schoolType: SchoolType;
     public gradeLevels: GradeLevels;
+    public address: string;
+    public city: string;
+    public state: State;
+    public zipCode: string;
     public eventsLink: EventSchool[] = [];
     public unitsLink: UnitSchool[] = [];
     public notesLink: SchoolNote[] = [];
@@ -333,7 +341,10 @@ export class Event extends AuditBase
     public eventType: EventType;
     public description: string;
     public dateTime: string;
-    public locationId: number;
+    public address: string;
+    public city: string;
+    public state: State;
+    public zipCode: string;
     public isConfirmed: boolean;
     public areFlyersOrdered: boolean;
     public requiresFacilitron: boolean;
@@ -345,17 +356,6 @@ export class Event extends AuditBase
     public constructor(init?: Partial<Event>) { super(init); (Object as any).assign(this, init); }
 }
 
-export class Location extends AuditBase
-{
-    public id: number;
-    public description: string;
-    public address: string;
-    public zipCode: number;
-    public schools: School[] = [];
-
-    public constructor(init?: Partial<Location>) { super(init); (Object as any).assign(this, init); }
-}
-
 export class Note extends AuditBase
 {
     public id: number;
@@ -365,21 +365,6 @@ export class Note extends AuditBase
     public eventsLinks: EventNote[] = [];
 
     public constructor(init?: Partial<Note>) { super(init); (Object as any).assign(this, init); }
-}
-
-export enum State
-{
-    FL = 'FL',
-}
-
-export class ZipCode extends AuditBase
-{
-    public id: number;
-    public city: string;
-    public state: State;
-    public locations: Location[] = [];
-
-    public constructor(init?: Partial<ZipCode>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class Forecast implements IGet
@@ -1022,17 +1007,6 @@ export class QueryEventUnit extends QueryDb<EventUnit> implements IReturn<QueryR
     public createResponse() { return new QueryResponse<EventUnit>(); }
 }
 
-/** @description Find Locations */
-// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class QueryLocation extends QueryDb<Location> implements IReturn<QueryResponse<Location>>
-{
-
-    public constructor(init?: Partial<QueryLocation>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'QueryLocation'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new QueryResponse<Location>(); }
-}
-
 /** @description Find Notes */
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
 export class QueryNotes extends QueryDb<Note> implements IReturn<QueryResponse<Note>>
@@ -1101,17 +1075,6 @@ export class QueryUnitSchool extends QueryDb<UnitSchool> implements IReturn<Quer
     public getTypeName() { return 'QueryUnitSchool'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<UnitSchool>(); }
-}
-
-/** @description Find Zip Codes */
-// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class QueryZipCode extends QueryDb<ZipCode> implements IReturn<QueryResponse<ZipCode>>
-{
-
-    public constructor(init?: Partial<QueryZipCode>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'QueryZipCode'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new QueryResponse<ZipCode>(); }
 }
 
 /** @description Create a new Booking */
@@ -1324,7 +1287,10 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
     public eventType: EventType;
     public description: string;
     public dateTime: string;
-    public locationId: number;
+    public address: string;
+    public city: string;
+    public state: State;
+    public zipCode: string;
     public isConfirmed: boolean;
     public areFlyersOrdered: boolean;
     public requiresFacilitron: boolean;
@@ -1343,7 +1309,9 @@ export class UpdateEvent implements IReturn<IdResponse>, IPatchDb<Event>
     public eventType: EventType;
     public description: string;
     public dateTime: string;
-    public locationId: number;
+    public address: string;
+    public city: string;
+    public zipCode: string;
     public isConfirmed: boolean;
     public areFlyersOrdered: boolean;
     public requiresFacilitron: boolean;
@@ -1455,46 +1423,6 @@ export class DeleteEventUnit implements IReturnVoid, IDeleteDb<EventUnit>
     public createResponse() {}
 }
 
-/** @description Create a new Location */
-// @ValidateRequest(Validator="HasRole(`Committee`)")
-export class CreateLocation implements IReturn<IdResponse>, ICreateDb<Location>
-{
-    public description: string;
-    public address: string;
-    public zipCode: number;
-
-    public constructor(init?: Partial<CreateLocation>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'CreateLocation'; }
-    public getMethod() { return 'POST'; }
-    public createResponse() { return new IdResponse(); }
-}
-
-/** @description Update a Location */
-// @ValidateRequest(Validator="HasRole(`Committee`)")
-export class UpdateLocation implements IReturn<IdResponse>, IPatchDb<Location>
-{
-    public description: string;
-    public address: string;
-    public zipCode: number;
-
-    public constructor(init?: Partial<UpdateLocation>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'UpdateLocation'; }
-    public getMethod() { return 'PATCH'; }
-    public createResponse() { return new IdResponse(); }
-}
-
-/** @description Delete a Location */
-// @ValidateRequest(Validator="HasRole(`MembershipChair`)")
-export class DeleteLocation implements IReturnVoid, IDeleteDb<Location>
-{
-    public id: number;
-
-    public constructor(init?: Partial<DeleteLocation>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'DeleteLocation'; }
-    public getMethod() { return 'DELETE'; }
-    public createResponse() {}
-}
-
 /** @description Create a new Note */
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class CreateNote implements IReturn<IdResponse>, ICreateDb<Note>
@@ -1538,9 +1466,12 @@ export class DeleteNote implements IReturnVoid, IDeleteDb<Note>
 export class CreateSchool implements IReturn<IdResponse>, ICreateDb<School>
 {
     public description: string;
-    public locationId: number;
     public schoolType: SchoolType;
     public gradeLevels: GradeLevels;
+    public address: string;
+    public city: string;
+    public state: State;
+    public zipCode: string;
 
     public constructor(init?: Partial<CreateSchool>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'CreateSchool'; }
@@ -1553,8 +1484,10 @@ export class CreateSchool implements IReturn<IdResponse>, ICreateDb<School>
 export class UpdateSchool implements IReturn<IdResponse>, IPatchDb<School>
 {
     public description: string;
-    public locationId: number;
     public gradeLevels: GradeLevels;
+    public address: string;
+    public city: string;
+    public zipCode: string;
 
     public constructor(init?: Partial<UpdateSchool>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateSchool'; }
@@ -1692,45 +1625,6 @@ export class DeleteUnitSchool implements IReturnVoid, IDeleteDb<UnitSchool>
 
     public constructor(init?: Partial<DeleteUnitSchool>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'DeleteUnitSchool'; }
-    public getMethod() { return 'DELETE'; }
-    public createResponse() {}
-}
-
-/** @description Create a new Zip Code */
-// @ValidateRequest(Validator="HasRole(`MembershipChair`)")
-export class CreateZipCode implements IReturn<IdResponse>, ICreateDb<ZipCode>
-{
-    public id: number;
-    public city: string;
-    public state: State;
-
-    public constructor(init?: Partial<CreateZipCode>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'CreateZipCode'; }
-    public getMethod() { return 'POST'; }
-    public createResponse() { return new IdResponse(); }
-}
-
-/** @description Update a Zip Code */
-// @ValidateRequest(Validator="HasRole(`MembershipChair`)")
-export class UpdateZipCode implements IReturn<IdResponse>, IPatchDb<ZipCode>
-{
-    public city: string;
-    public state: State;
-
-    public constructor(init?: Partial<UpdateZipCode>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'UpdateZipCode'; }
-    public getMethod() { return 'PATCH'; }
-    public createResponse() { return new IdResponse(); }
-}
-
-/** @description Delete a Zip Code */
-// @ValidateRequest(Validator="HasRole(`MembershipChair`)")
-export class DeleteZipCode implements IReturnVoid, IDeleteDb<ZipCode>
-{
-    public id: number;
-
-    public constructor(init?: Partial<DeleteZipCode>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'DeleteZipCode'; }
     public getMethod() { return 'DELETE'; }
     public createResponse() {}
 }
