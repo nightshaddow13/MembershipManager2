@@ -72,7 +72,8 @@ export enum InputType
 {
     Select,
     NumberInput,
-    TextInput
+    TextInput,
+    DateTime
 }
 
 export type FormInput = {

@@ -86,6 +86,13 @@ function createSidebar({typeName, open, inputs, onDone, onSave, instance, create
                                                         defaultValue={input.value(request)}
                                                         onChange={change(input.onChange)} />
                                                 )
+                                            case InputType.DateTime:
+                                                return(
+                                                    <TextInput id={input.id}
+                                                        type="datetime-local"
+                                                        defaultValue={input.value(request)}
+                                                        onChange={change(input.onChange)} />
+                                                )
                                         }
                                     })()}
                                 </div>

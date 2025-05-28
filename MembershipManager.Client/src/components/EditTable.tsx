@@ -63,7 +63,7 @@ function EditTable<TThing>({createRole, typeName, columns, createInputs, editInp
         <div className="mt-4 flex flex-col">
             {!hasRole(createRole) ? null :                          
                 <div className="my-2">
-                    <Button variant="outline" onClick={() => setNewThing(true)}>New Unit</Button>
+                    <Button variant="outline" onClick={() => setNewThing(true)}>New {typeName}</Button>
                 </div>}
             <DataTable columns={columns} data={thing} getCoreRowModel={getCoreRowModel()} state={{rowSelection}}
                        enableRowSelection={true} enableMultiRowSelection={false}
