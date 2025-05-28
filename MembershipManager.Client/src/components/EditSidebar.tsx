@@ -109,6 +109,13 @@ function editSidebar<TEdit>({typeName, id, inputs, onDone, onSave, instance, que
                                                         value={input.value(request)}
                                                         onChange={change(input.onChange)} />
                                                 )
+                                            case InputType.DateTime:
+                                                return(
+                                                    <TextInput id={input.id}
+                                                        type="datetime-local"
+                                                        defaultValue={input.value(request)}
+                                                        onChange={change(input.onChange)} />
+                                                )
                                         }
                                     })()}
                                 </div>

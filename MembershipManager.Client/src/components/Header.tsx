@@ -32,6 +32,9 @@ export default () => {
                             <NavLink to="/schools" className={navClass}>Schools</NavLink>
                         </li>
                         <li className="relative flex flex-wrap just-fu-start m-0">
+                            <NavLink to="/events" className={navClass}>Events</NavLink>
+                        </li>
+                        <li className="relative flex flex-wrap just-fu-start m-0">
                             <NavLink to="/counter" className={navClass}>Counter</NavLink>
                         </li>
                         <li className="relative flex flex-wrap just-fu-start m-0">
