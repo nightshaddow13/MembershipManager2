@@ -3,9 +3,13 @@ import Logo from "@/assets/img/logo.svg?react";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/useAuth";
+import { Burger, ButtonGroup, Group } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 export default () => {
 	const { auth, signout } = useAuth();
+	const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+	const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
 
 	const navClass = ({ isActive }: any) =>
 		[
@@ -14,7 +18,46 @@ export default () => {
 		].join(" ");
 
 	return (
-		<></>
+		<>
+			<Group
+				justify="space-between"
+				h="100%"
+				px="md"
+			>
+				<Burger
+					opened={mobileOpened}
+					onClick={toggleMobile}
+					hiddenFrom="sm"
+					size="sm"
+				/>
+				<Burger
+					opened={desktopOpened}
+					onClick={toggleDesktop}
+					visibleFrom="sm"
+					size="sm"
+				/>
+				{auth ? (
+					<>
+						<Group
+							gap="xl"
+							pe="lg"
+						>
+							<Group>
+								<img
+									className="h-8 w-8 rounded-full"
+									src={auth.profileUrl}
+									alt=""
+								/>
+								<Link to={"/profile"}>Profile</Link>
+							</Group>
+							<Button onClick={() => signout()}>Logout</Button>
+						</Group>
+					</>
+				) : (
+					<Link to={"/signin"}>Login</Link>
+				)}
+			</Group>
+		</>
 		/*<header className="border-b border-gray-200 dark:border-gray-800 pr-3">
         <div className="flex flex-wrap items-center">
             <div className="absolute z-10 top-2 left-2 sm:static flex-shrink flex-grow-0">

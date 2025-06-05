@@ -1,5 +1,6 @@
 import { AppShell, Burger, Group, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import Header from "./Header";
 
 type Props = {
 	title?: string;
@@ -21,7 +22,7 @@ const Layout = ({ title, children }: Props) => {
 			padding="md"
 		>
 			<AppShell.Header>
-				<Group
+				{/*<Group
 					h="100%"
 					px="md"
 				>
@@ -38,7 +39,8 @@ const Layout = ({ title, children }: Props) => {
 						size="sm"
 					/>
 					{title}
-				</Group>
+				</Group>}</AppShell>*/}
+				<Header />
 			</AppShell.Header>
 			<AppShell.Navbar p="md">
 				Navbar
