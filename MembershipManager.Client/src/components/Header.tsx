@@ -1,18 +1,21 @@
-import { Link, NavLink } from "react-router-dom"
-import Logo from "@/assets/img/logo.svg?react"
-import DarkModeToggle from "@/components/DarkModeToggle"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/useAuth"
+import { Link, NavLink } from "react-router-dom";
+import Logo from "@/assets/img/logo.svg?react";
+import DarkModeToggle from "@/components/DarkModeToggle";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/useAuth";
 
 export default () => {
-    const {auth, signout} = useAuth()
+	const { auth, signout } = useAuth();
 
-    const navClass = ({isActive}: any) => [
-        "p-4 flex items-center justify-start mw-full hover:text-sky-500 dark:hover:text-sky-400",
-        isActive ? "text-link-dark dark:text-link-dark" : "",
-    ].join(" ")
+	const navClass = ({ isActive }: any) =>
+		[
+			"p-4 flex items-center justify-start mw-full hover:text-sky-500 dark:hover:text-sky-400",
+			isActive ? "text-link-dark dark:text-link-dark" : "",
+		].join(" ");
 
-    return (<header className="border-b border-gray-200 dark:border-gray-800 pr-3">
+	return (
+		<></>
+		/*<header className="border-b border-gray-200 dark:border-gray-800 pr-3">
         <div className="flex flex-wrap items-center">
             <div className="absolute z-10 top-2 left-2 sm:static flex-shrink flex-grow-0">
                 <div className="cursor-pointer">
@@ -92,5 +95,6 @@ export default () => {
                 </nav>
             </div>
         </div>
-    </header>)
-}
+    </header>*/
+	);
+};
