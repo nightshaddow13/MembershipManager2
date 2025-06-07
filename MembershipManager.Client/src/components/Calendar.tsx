@@ -1,4 +1,4 @@
-// Calendar.tsx
+// EventCalendar.tsx
 import React, { useState, useEffect, useRef, JSX } from "react";
 import {
 	startOfMonth,
@@ -16,88 +16,43 @@ import {
 	parseISO,
 } from "date-fns";
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-} from "@/components/ui/dialog";
 
-interface Event {
+export interface Event {
 	id: string;
 	date: string; // yyyy-MM-dd
 	title: string;
 }
 
-// Smaller sample data with some multiple events on the same day
-const sampleEvents: Event[] = [
-	{
-		id: "1",
-		date: format(new Date(), "yyyy-MM-dd"),
-		title: "Meeting with Bob",
-	},
-	{
-		id: "2",
-		date: format(new Date(), "yyyy-MM-dd"),
-		title: "Lunch with Alice",
-	},
-	{
-		id: "3",
-		date: format(addDays(new Date(), 1), "yyyy-MM-dd"),
-		title: "Project deadline",
-	},
-	{
-		id: "4",
-		date: format(addDays(new Date(), 2), "yyyy-MM-dd"),
-		title: "Call with client",
-	},
-	{
-		id: "5",
-		date: format(addDays(new Date(), 2), "yyyy-MM-dd"),
-		title: "Team standup",
-	},
-	{
-		id: "6",
-		date: format(addDays(new Date(), 5), "yyyy-MM-dd"),
-		title: "Doctor appointment",
-	},
-];
+interface EventCalendarProps {
+	events: Event[];
+	onAddEvent?: (date: Date) => void; // called when user clicks + or double clicks a day
+	onEditEvent?: (event: Event) => void; // called when user clicks an event to edit
+	initialMonth?: Date;
+	initialSelectedDate?: Date | null;
+	className?: string;
+}
 
-const Calendar: React.FC = () => {
-	const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-	const [events, setEvents] = useState<Event[]>(sampleEvents);
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [newEventTitle, setNewEventTitle] = useState("");
-	const [editEventId, setEditEventId] = useState<string | null>(null);
-	const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-		if (typeof window !== "undefined") {
-			const saved = localStorage.getItem("dark-mode");
-			if (saved !== null) return saved === "true";
-			return window.matchMedia("(prefers-color-scheme: dark)").matches;
-		}
-		return false;
-	});
+const EventCalendar: React.FC<EventCalendarProps> = ({
+	events,
+	onAddEvent,
+	onEditEvent,
+	initialMonth,
+	initialSelectedDate = null,
+	className,
+}) => {
+	const [currentMonth, setCurrentMonth] = useState<Date>(
+		initialMonth || new Date()
+	);
+	const [selectedDate, setSelectedDate] = useState<Date | null>(
+		initialSelectedDate
+	);
+	const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
 	const calendarRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const eventRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-	// For selecting which event on selectedDate to view/edit
-	const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-
-	useEffect(() => {
-		const root = window.document.documentElement;
-		if (isDarkMode) {
-			root.classList.add("dark");
-		} else {
-			root.classList.remove("dark");
-		}
-		localStorage.setItem("dark-mode", isDarkMode.toString());
-	}, [isDarkMode]);
-
-	// When selectedDate changes, reset selectedEventId to first event or null
+	// When selectedDate or events change, reset selectedEventId to first event or null
 	useEffect(() => {
 		if (!selectedDate) {
 			setSelectedEventId(null);
@@ -120,53 +75,27 @@ const Calendar: React.FC = () => {
 
 	const formatDateKey = (date: Date) => format(date, "yyyy-MM-dd");
 
-	// Clicking a day just selects the date, no editing
+	// Clicking a day selects the date
 	const onDayClick = (day: Date) => {
 		setSelectedDate(day);
 	};
 
-	const openAddEventDialog = (date: Date) => {
-		setSelectedDate(date);
-		setNewEventTitle("");
-		setEditEventId(null);
-		setIsDialogOpen(true);
+	// Double click a day triggers add event callback
+	const onDayDoubleClick = (day: Date) => {
+		if (onAddEvent) onAddEvent(day);
 	};
 
-	const openEditEventDialog = (event: Event) => {
-		setSelectedDate(parseISO(event.date));
-		setNewEventTitle(event.title);
-		setEditEventId(event.id);
+	// Click on + button triggers add event callback for selectedDate or today
+	const onAddClick = () => {
+		if (onAddEvent) onAddEvent(selectedDate || new Date());
+	};
+
+	// Click on event triggers edit event callback
+	const onEventClick = (event: Event) => {
 		setSelectedEventId(event.id);
-		setIsDialogOpen(true);
-	};
-
-	const addOrEditEvent = () => {
-		if (!newEventTitle.trim() || !selectedDate) return;
-
-		if (editEventId) {
-			// Edit existing event
-			setEvents((prev) =>
-				prev.map((ev) =>
-					ev.id === editEventId
-						? {
-								...ev,
-								title: newEventTitle.trim(),
-								date: formatDateKey(selectedDate),
-						  }
-						: ev
-				)
-			);
-		} else {
-			// Add new event
-			const newEvent: Event = {
-				id: crypto.randomUUID(),
-				date: formatDateKey(selectedDate),
-				title: newEventTitle.trim(),
-			};
-			setEvents((prev) => [...prev, newEvent]);
-			setSelectedEventId(newEvent.id);
-		}
-		setIsDialogOpen(false);
+		setSelectedDate(parseISO(event.date));
+		setCurrentMonth(parseISO(event.date));
+		if (onEditEvent) onEditEvent(event);
 	};
 
 	const goToToday = () => {
@@ -181,12 +110,14 @@ const Calendar: React.FC = () => {
 				<Button
 					variant="outline"
 					onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+					aria-label="Previous month"
 				>
 					Prev
 				</Button>
 				<Button
 					variant="outline"
 					onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+					aria-label="Next month"
 				>
 					Next
 				</Button>
@@ -197,6 +128,7 @@ const Calendar: React.FC = () => {
 			<Button
 				variant="outline"
 				onClick={goToToday}
+				aria-label="Go to today"
 			>
 				Today
 			</Button>
@@ -251,7 +183,7 @@ const Calendar: React.FC = () => {
 								: ""
 						}`}
 						onClick={() => onDayClick(cloneDay)}
-						onDoubleClick={() => openAddEventDialog(cloneDay)}
+						onDoubleClick={() => onDayDoubleClick(cloneDay)}
 						aria-label={`Select day ${formattedDate}`}
 					>
 						<div className="flex justify-between items-center">
@@ -271,13 +203,13 @@ const Calendar: React.FC = () => {
 										title={ev.title}
 										onClick={(e) => {
 											e.stopPropagation();
-											openEditEventDialog(ev);
+											onEventClick(ev);
 										}}
 										tabIndex={0}
 										onKeyDown={(e) => {
 											if (e.key === "Enter" || e.key === " ") {
 												e.preventDefault();
-												openEditEventDialog(ev);
+												onEventClick(ev);
 											}
 										}}
 										role="button"
@@ -309,7 +241,7 @@ const Calendar: React.FC = () => {
 		return <div>{rows}</div>;
 	};
 
-	// Upcoming events starting from today (including today), sorted ascending
+	// Filter upcoming events starting from today (including today), sorted ascending
 	const filteredUpcomingEvents = events
 		.filter((ev) => {
 			const evDate = parseISO(ev.date);
@@ -332,16 +264,6 @@ const Calendar: React.FC = () => {
 	const sidebarEvents = selectedDate
 		? eventsByDate[formatDateKey(selectedDate)] || []
 		: filteredUpcomingEvents;
-
-	// Scroll to selected event in sidebar
-	useEffect(() => {
-		if (selectedEventId) {
-			const ref = eventRefs.current[selectedEventId];
-			if (ref) {
-				ref.scrollIntoView({ behavior: "smooth", block: "center" });
-			}
-		}
-	}, [selectedEventId]);
 
 	// Handle clicks outside calendar and sidebar to clear selectedDate (show all events)
 	useEffect(() => {
@@ -366,202 +288,127 @@ const Calendar: React.FC = () => {
 	}, []);
 
 	return (
-		<>
-			<div className="max-w-5xl mx-auto px-6 py-6 border rounded-lg shadow-md bg-white dark:bg-gray-800 dark:border-gray-700">
-				<div className="flex justify-end mb-2">
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() => setIsDarkMode((prev) => !prev)}
-						aria-label="Toggle dark mode"
-					>
-						{isDarkMode ? "🌞 Light" : "🌙 Dark"}
-					</Button>
+		<div className={className}>
+			{header()}
+
+			<div className="flex flex-col md:flex-row md:gap-x-8">
+				{/* Calendar grid */}
+				<div
+					className="md:w-2/3 max-w-[600px] mx-auto md:mx-0"
+					ref={calendarRef}
+				>
+					{daysOfWeek()}
+					{cells()}
 				</div>
 
-				{header()}
+				{/* Upcoming events sidebar, height matched to calendar */}
+				<aside
+					className="md:w-1/3 mt-6 md:mt-0 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden relative"
+					aria-label="Upcoming events"
+					style={{
+						maxHeight: calendarRef.current?.offsetHeight
+							? `${calendarRef.current.offsetHeight}px`
+							: "600px",
+					}}
+				>
+					<div className="flex justify-between items-center mb-4">
+						<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+							{selectedDate
+								? `Events on ${format(selectedDate, "PPP")}`
+								: "Upcoming Events"}
+						</h3>
 
-				<div className="flex flex-col md:flex-row md:gap-x-8">
-					{/* Calendar grid with ref */}
+						{/* + Icon Button with Tooltip */}
+						<button
+							type="button"
+							onClick={onAddClick}
+							aria-label="Add new event"
+							className="relative p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 group"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="h-6 w-6 text-blue-600 dark:text-blue-400"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								strokeWidth={2}
+								aria-hidden="true"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M12 4v16m8-8H4"
+								/>
+							</svg>
+							{/* Tooltip */}
+							<span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
+								Add new event
+							</span>
+						</button>
+					</div>
+
 					<div
-						className="md:w-2/3 max-w-[600px] mx-auto md:mx-0"
-						ref={calendarRef}
+						ref={containerRef}
+						className="flex-grow overflow-y-auto pr-2"
+						tabIndex={0}
 					>
-						{daysOfWeek()}
-						{cells()}
-					</div>
-
-					{/* Upcoming events sidebar, height matched to calendar */}
-					<aside
-						className="md:w-1/3 mt-6 md:mt-0 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden relative"
-						aria-label="Upcoming events"
-						style={{
-							maxHeight: calendarRef.current?.offsetHeight
-								? `${calendarRef.current.offsetHeight}px`
-								: "600px",
-						}}
-					>
-						<div className="flex justify-between items-center mb-4">
-							<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+						{sidebarEvents.length === 0 ? (
+							<p className="text-gray-600 dark:text-gray-400">
 								{selectedDate
-									? `Events on ${format(selectedDate, "PPP")}`
-									: "Upcoming Events"}
-							</h3>
-
-							{/* + Icon Button with Tooltip */}
-							<button
-								type="button"
-								onClick={() => {
-									// If no date selected, default to today for new event
-									openAddEventDialog(selectedDate || new Date());
-								}}
-								aria-label="Add new event"
-								className="relative p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="h-6 w-6 text-blue-600 dark:text-blue-400"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									strokeWidth={2}
-									aria-hidden="true"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M12 4v16m8-8H4"
-									/>
-								</svg>
-								{/* Tooltip */}
-								<span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
-									Add new event
-								</span>
-							</button>
-						</div>
-
-						<div
-							ref={containerRef}
-							className="flex-grow overflow-y-auto pr-2"
-							tabIndex={0}
-						>
-							{sidebarEvents.length === 0 ? (
-								<p className="text-gray-600 dark:text-gray-400">
-									{selectedDate
-										? "No events on this day."
-										: "No upcoming events."}
-								</p>
-							) : (
-								<div className="space-y-3">
-									{sidebarEvents.map((ev) => (
-										<div
-											key={ev.id}
-											ref={(el) => {
-												eventRefs.current[ev.id] = el;
-											}}
-											tabIndex={0}
-											className={`border border-gray-300 dark:border-gray-700 rounded p-2 bg-white dark:bg-gray-800 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${
-												ev.id === selectedEventId
-													? "ring-2 ring-blue-500 dark:ring-blue-400"
-													: ""
-											}`}
-											onClick={() => {
-												setSelectedEventId(ev.id);
-												setSelectedDate(parseISO(ev.date));
-												setCurrentMonth(parseISO(ev.date));
-												openEditEventDialog(ev);
-											}}
-											onDoubleClick={() => openEditEventDialog(ev)}
-											onKeyDown={(e) => {
-												if (e.key === "Enter" || e.key === " ") {
-													e.preventDefault();
-													setSelectedEventId(ev.id);
-													setSelectedDate(parseISO(ev.date));
-													setCurrentMonth(parseISO(ev.date));
-													openEditEventDialog(ev);
-												}
-												if (e.key === "e" || e.key === "E") {
-													e.preventDefault();
-													openEditEventDialog(ev);
-												}
-											}}
-											title={ev.title}
-											role="button"
-											aria-pressed={ev.id === selectedEventId}
-											aria-label={`Event ${ev.title} on ${format(
-												parseISO(ev.date),
-												"PPP"
-											)}. Click to edit.`}
-										>
-											<div className="flex justify-between items-center">
-												<span className="font-semibold text-blue-600 dark:text-blue-400 truncate">
-													{ev.title}
-												</span>
-												<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-													{format(parseISO(ev.date), "PPP")}
-												</span>
-											</div>
+									? "No events on this day."
+									: "No upcoming events."}
+							</p>
+						) : (
+							<div className="space-y-3">
+								{sidebarEvents.map((ev) => (
+									<div
+										key={ev.id}
+										ref={(el) => {
+											eventRefs.current[ev.id] = el;
+										}}
+										tabIndex={0}
+										className={`border border-gray-300 dark:border-gray-700 rounded p-2 bg-white dark:bg-gray-800 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${
+											ev.id === selectedEventId
+												? "ring-2 ring-blue-500 dark:ring-blue-400"
+												: ""
+										}`}
+										onClick={() => onEventClick(ev)}
+										onDoubleClick={() => onEventClick(ev)}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") {
+												e.preventDefault();
+												onEventClick(ev);
+											}
+											if (e.key === "e" || e.key === "E") {
+												e.preventDefault();
+												onEventClick(ev);
+											}
+										}}
+										title={ev.title}
+										role="button"
+										aria-pressed={ev.id === selectedEventId}
+										aria-label={`Event ${ev.title} on ${format(
+											parseISO(ev.date),
+											"PPP"
+										)}. Click to edit.`}
+									>
+										<div className="flex justify-between items-center">
+											<span className="font-semibold text-blue-600 dark:text-blue-400 truncate">
+												{ev.title}
+											</span>
+											<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+												{format(parseISO(ev.date), "PPP")}
+											</span>
 										</div>
-									))}
-								</div>
-							)}
-						</div>
-					</aside>
-				</div>
-			</div>
-
-			{/* Add/Edit event dialog */}
-			<Dialog
-				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}
-			>
-				<DialogContent className="bg-white dark:bg-gray-900 dark:text-gray-100">
-					<DialogHeader>
-						<DialogTitle>
-							{editEventId ? "Edit Event" : "Add Event"} on{" "}
-							{selectedDate ? format(selectedDate, "PPP") : ""}
-						</DialogTitle>
-					</DialogHeader>
-					<div className="grid gap-4 py-4">
-						<div className="flex flex-col space-y-1">
-							<label
-								htmlFor="event-title"
-								className="dark:text-gray-200 text-sm font-medium"
-							>
-								Event Title
-							</label>
-							<input
-								id="event-title"
-								type="text"
-								value={newEventTitle}
-								onChange={(e) => setNewEventTitle(e.target.value)}
-								placeholder="Enter event title"
-								autoFocus
-								className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-100"
-							/>
-						</div>
+									</div>
+								))}
+							</div>
+						)}
 					</div>
-					<DialogFooter>
-						<Button
-							variant="outline"
-							onClick={() => {
-								setIsDialogOpen(false);
-								setEditEventId(null);
-							}}
-						>
-							Cancel
-						</Button>
-						<Button
-							onClick={addOrEditEvent}
-							disabled={!newEventTitle.trim()}
-						>
-							{editEventId ? "Save" : "Add Event"}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</>
+				</aside>
+			</div>
+		</div>
 	);
 };
 
-export default Calendar;
+export default EventCalendar;
