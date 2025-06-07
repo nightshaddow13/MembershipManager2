@@ -1,9 +1,12 @@
+import Calendar from "@/components/Calendar";
 import Layout from "@/components/Layout";
 
 const Index = () => {
 	return (
 		<Layout title="React SPA with Vite + TypeScript">
-			<p>To be continued</p>
+			<div className="mt-5">
+				<Calendar />
+			</div>
 		</Layout>
 	);
 };
