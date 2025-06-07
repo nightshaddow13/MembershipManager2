@@ -393,7 +393,7 @@ const Calendar: React.FC = () => {
 
 					{/* Upcoming events sidebar, height matched to calendar */}
 					<aside
-						className="md:w-1/3 mt-6 md:mt-0 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
+						className="md:w-1/3 mt-6 md:mt-0 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden relative"
 						aria-label="Upcoming events"
 						style={{
 							maxHeight: calendarRef.current?.offsetHeight
@@ -401,13 +401,44 @@ const Calendar: React.FC = () => {
 								: "600px",
 						}}
 					>
-						<h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
-							{selectedDate
-								? `Events on ${format(selectedDate, "PPP")}`
-								: "Upcoming Events"}
-						</h3>
+						<div className="flex justify-between items-center mb-4">
+							<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+								{selectedDate
+									? `Events on ${format(selectedDate, "PPP")}`
+									: "Upcoming Events"}
+							</h3>
 
-						{/* DROPDOWN REMOVED */}
+							{/* + Icon Button with Tooltip */}
+							<button
+								type="button"
+								onClick={() => {
+									// If no date selected, default to today for new event
+									openAddEventDialog(selectedDate || new Date());
+								}}
+								aria-label="Add new event"
+								className="relative p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="h-6 w-6 text-blue-600 dark:text-blue-400"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+									strokeWidth={2}
+									aria-hidden="true"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M12 4v16m8-8H4"
+									/>
+								</svg>
+								{/* Tooltip */}
+								<span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
+									Add new event
+								</span>
+							</button>
+						</div>
 
 						<div
 							ref={containerRef}
