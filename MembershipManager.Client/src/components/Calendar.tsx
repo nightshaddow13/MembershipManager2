@@ -14,12 +14,13 @@ import {
 	isAfter,
 	isSameDay as isSameDate,
 	parseISO,
+	compareAsc,
 } from "date-fns";
 import { Button } from "@/components/ui/button";
 
 export interface Event {
 	id: string;
-	date: string; // yyyy-MM-dd
+	datetime: string; // ISO 8601 datetime with offset, e.g. '2024-06-10T09:00:00-04:00'
 	title: string;
 }
 
@@ -52,6 +53,13 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 	const containerRef = useRef<HTMLDivElement>(null);
 	const eventRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+	// Helper to parse event datetime string to Date object
+	const parseEventDateTime = (ev: Event): Date => parseISO(ev.datetime);
+
+	// Helper to get event date key (yyyy-MM-dd) in local time
+	const getEventDateKey = (ev: Event) =>
+		format(parseEventDateTime(ev), "yyyy-MM-dd");
+
 	// When selectedDate or events change, reset selectedEventId to first event or null
 	useEffect(() => {
 		if (!selectedDate) {
@@ -59,7 +67,9 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 			return;
 		}
 		const dayKey = format(selectedDate, "yyyy-MM-dd");
-		const dayEvents = events.filter((ev) => ev.date === dayKey);
+		const dayEvents = events
+			.filter((ev) => getEventDateKey(ev) === dayKey)
+			.sort((a, b) => compareAsc(parseEventDateTime(a), parseEventDateTime(b)));
 		setSelectedEventId(dayEvents.length > 0 ? dayEvents[0].id : null);
 	}, [selectedDate, events]);
 
@@ -93,8 +103,8 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 	// Click on event triggers edit event callback
 	const onEventClick = (event: Event) => {
 		setSelectedEventId(event.id);
-		setSelectedDate(parseISO(event.date));
-		setCurrentMonth(parseISO(event.date));
+		setSelectedDate(parseEventDateTime(event));
+		setCurrentMonth(parseEventDateTime(event));
 		if (onEditEvent) onEditEvent(event);
 	};
 
@@ -167,7 +177,12 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 				const cloneDay = day;
 				const dayKey = formatDateKey(day);
 
-				const dayEvents = events.filter((ev) => ev.date === dayKey);
+				// Filter events for this day and sort by datetime ascending
+				const dayEvents = events
+					.filter((ev) => getEventDateKey(ev) === dayKey)
+					.sort((a, b) =>
+						compareAsc(parseEventDateTime(a), parseEventDateTime(b))
+					);
 
 				days.push(
 					<button
@@ -241,24 +256,32 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 		return <div>{rows}</div>;
 	};
 
-	// Filter upcoming events starting from today (including today), sorted ascending
+	// Filter upcoming events starting from today (including today), sorted ascending by datetime
+	const today = new Date();
 	const filteredUpcomingEvents = events
 		.filter((ev) => {
-			const evDate = parseISO(ev.date);
-			const today = new Date();
+			const evDate = parseEventDateTime(ev);
 			return isSameDate(evDate, today) || isAfter(evDate, today);
 		})
-		.sort((a, b) => (a.date > b.date ? 1 : -1));
+		.sort((a, b) => compareAsc(parseEventDateTime(a), parseEventDateTime(b)));
 
-	// Group events by date for sidebar selection
+	// Group events by date key (local date)
 	const eventsByDate = filteredUpcomingEvents.reduce<Record<string, Event[]>>(
 		(acc, ev) => {
-			acc[ev.date] = acc[ev.date] || [];
-			acc[ev.date].push(ev);
+			const dateKey = getEventDateKey(ev);
+			acc[dateKey] = acc[dateKey] || [];
+			acc[dateKey].push(ev);
 			return acc;
 		},
 		{}
 	);
+
+	// Sort each day's events by datetime ascending
+	Object.keys(eventsByDate).forEach((dateKey) => {
+		eventsByDate[dateKey].sort((a, b) =>
+			compareAsc(parseEventDateTime(a), parseEventDateTime(b))
+		);
+	});
 
 	// Sidebar events for selectedDate or all upcoming if no selectedDate
 	const sidebarEvents = selectedDate
@@ -384,21 +407,31 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 												onEventClick(ev);
 											}
 										}}
-										title={ev.title}
+										title={`${format(parseEventDateTime(ev), "p")} - ${
+											ev.title
+										}`}
 										role="button"
 										aria-pressed={ev.id === selectedEventId}
 										aria-label={`Event ${ev.title} on ${format(
-											parseISO(ev.date),
+											parseEventDateTime(ev),
 											"PPP"
 										)}. Click to edit.`}
 									>
 										<div className="flex justify-between items-center">
 											<span className="font-semibold text-blue-600 dark:text-blue-400 truncate">
+												{/* Display time only when a date is selected */}
+												{selectedDate && (
+													<span className="font-mono mr-1 text-xs text-gray-700 dark:text-gray-300">
+														{format(parseEventDateTime(ev), "p")}
+													</span>
+												)}
 												{ev.title}
 											</span>
-											<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-												{format(parseISO(ev.date), "PPP")}
-											</span>
+											{!selectedDate && (
+												<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+													{format(parseEventDateTime(ev), "PPP")}
+												</span>
+											)}
 										</div>
 									</div>
 								))}
