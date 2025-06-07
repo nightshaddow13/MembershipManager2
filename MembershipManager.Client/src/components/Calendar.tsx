@@ -1,5 +1,5 @@
 // Calendar.tsx
-import React, { useState, useEffect, JSX } from "react";
+import React, { useState, useEffect, useRef, JSX } from "react";
 import {
 	startOfMonth,
 	endOfMonth,
@@ -11,6 +11,9 @@ import {
 	isSameDay,
 	addMonths,
 	subMonths,
+	isAfter,
+	isSameDay as isSameDate,
+	parseISO,
 } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,12 +30,47 @@ interface Event {
 	title: string;
 }
 
+// Smaller sample data with some multiple events on the same day
+const sampleEvents: Event[] = [
+	{
+		id: "1",
+		date: format(new Date(), "yyyy-MM-dd"),
+		title: "Meeting with Bob",
+	},
+	{
+		id: "2",
+		date: format(new Date(), "yyyy-MM-dd"),
+		title: "Lunch with Alice",
+	},
+	{
+		id: "3",
+		date: format(addDays(new Date(), 1), "yyyy-MM-dd"),
+		title: "Project deadline",
+	},
+	{
+		id: "4",
+		date: format(addDays(new Date(), 2), "yyyy-MM-dd"),
+		title: "Call with client",
+	},
+	{
+		id: "5",
+		date: format(addDays(new Date(), 2), "yyyy-MM-dd"),
+		title: "Team standup",
+	},
+	{
+		id: "6",
+		date: format(addDays(new Date(), 5), "yyyy-MM-dd"),
+		title: "Doctor appointment",
+	},
+];
+
 const Calendar: React.FC = () => {
 	const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [events, setEvents] = useState<Event[]>([]);
+	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+	const [events, setEvents] = useState<Event[]>(sampleEvents);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [newEventTitle, setNewEventTitle] = useState("");
+	const [editEventId, setEditEventId] = useState<string | null>(null);
 	const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
 		if (typeof window !== "undefined") {
 			const saved = localStorage.getItem("dark-mode");
@@ -41,6 +79,13 @@ const Calendar: React.FC = () => {
 		}
 		return false;
 	});
+
+	const calendarRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const eventRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+	// For selecting which event on selectedDate to view/edit
+	const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
 	useEffect(() => {
 		const root = window.document.documentElement;
@@ -52,22 +97,75 @@ const Calendar: React.FC = () => {
 		localStorage.setItem("dark-mode", isDarkMode.toString());
 	}, [isDarkMode]);
 
+	// When selectedDate changes, reset selectedEventId to first event or null
+	useEffect(() => {
+		if (!selectedDate) {
+			setSelectedEventId(null);
+			return;
+		}
+		const dayKey = format(selectedDate, "yyyy-MM-dd");
+		const dayEvents = events.filter((ev) => ev.date === dayKey);
+		setSelectedEventId(dayEvents.length > 0 ? dayEvents[0].id : null);
+	}, [selectedDate, events]);
+
+	// Scroll to the selected event in the sidebar when it changes
+	useEffect(() => {
+		if (selectedEventId) {
+			const ref = eventRefs.current[selectedEventId];
+			if (ref) {
+				ref.scrollIntoView({ behavior: "smooth", block: "center" });
+			}
+		}
+	}, [selectedEventId]);
+
 	const formatDateKey = (date: Date) => format(date, "yyyy-MM-dd");
+
+	// Clicking a day just selects the date, no editing
+	const onDayClick = (day: Date) => {
+		setSelectedDate(day);
+	};
 
 	const openAddEventDialog = (date: Date) => {
 		setSelectedDate(date);
 		setNewEventTitle("");
+		setEditEventId(null);
 		setIsDialogOpen(true);
 	};
 
-	const addEvent = () => {
-		if (!newEventTitle.trim()) return;
-		const newEvent: Event = {
-			id: crypto.randomUUID(),
-			date: formatDateKey(selectedDate),
-			title: newEventTitle.trim(),
-		};
-		setEvents((prev) => [...prev, newEvent]);
+	const openEditEventDialog = (event: Event) => {
+		setSelectedDate(parseISO(event.date));
+		setNewEventTitle(event.title);
+		setEditEventId(event.id);
+		setSelectedEventId(event.id);
+		setIsDialogOpen(true);
+	};
+
+	const addOrEditEvent = () => {
+		if (!newEventTitle.trim() || !selectedDate) return;
+
+		if (editEventId) {
+			// Edit existing event
+			setEvents((prev) =>
+				prev.map((ev) =>
+					ev.id === editEventId
+						? {
+								...ev,
+								title: newEventTitle.trim(),
+								date: formatDateKey(selectedDate),
+						  }
+						: ev
+				)
+			);
+		} else {
+			// Add new event
+			const newEvent: Event = {
+				id: crypto.randomUUID(),
+				date: formatDateKey(selectedDate),
+				title: newEventTitle.trim(),
+			};
+			setEvents((prev) => [...prev, newEvent]);
+			setSelectedEventId(newEvent.id);
+		}
 		setIsDialogOpen(false);
 	};
 
@@ -140,16 +238,21 @@ const Calendar: React.FC = () => {
 				const dayEvents = events.filter((ev) => ev.date === dayKey);
 
 				days.push(
-					<div
+					<button
 						key={day.toString()}
-						className={`p-2 cursor-pointer rounded-lg border border-transparent hover:border-blue-400 dark:hover:border-blue-600 ${
+						type="button"
+						className={`p-2 text-left cursor-pointer rounded-lg border border-transparent hover:border-blue-400 dark:hover:border-blue-600 w-full ${
 							!isSameMonth(day, monthStart)
 								? "text-gray-400 dark:text-gray-600"
 								: "text-gray-900 dark:text-gray-100"
 						} ${
-							isSameDay(day, selectedDate) ? "bg-blue-100 dark:bg-blue-900" : ""
+							isSameDay(day, selectedDate || new Date(0))
+								? "bg-blue-100 dark:bg-blue-900"
+								: ""
 						}`}
-						onClick={() => openAddEventDialog(cloneDay)}
+						onClick={() => onDayClick(cloneDay)}
+						onDoubleClick={() => openAddEventDialog(cloneDay)}
+						aria-label={`Select day ${formattedDate}`}
 					>
 						<div className="flex justify-between items-center">
 							<span className="font-medium">{formattedDate}</span>
@@ -164,15 +267,28 @@ const Calendar: React.FC = () => {
 								{dayEvents.map((ev) => (
 									<li
 										key={ev.id}
-										className="bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-200 rounded px-1 truncate"
+										className="bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-200 rounded px-1 truncate cursor-pointer"
 										title={ev.title}
+										onClick={(e) => {
+											e.stopPropagation();
+											openEditEventDialog(ev);
+										}}
+										tabIndex={0}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") {
+												e.preventDefault();
+												openEditEventDialog(ev);
+											}
+										}}
+										role="button"
+										aria-label={`Edit event ${ev.title}`}
 									>
 										{ev.title}
 									</li>
 								))}
 							</ul>
 						)}
-					</div>
+					</button>
 				);
 
 				day = addDays(day, 1);
@@ -193,9 +309,65 @@ const Calendar: React.FC = () => {
 		return <div>{rows}</div>;
 	};
 
+	// Upcoming events starting from today (including today), sorted ascending
+	const filteredUpcomingEvents = events
+		.filter((ev) => {
+			const evDate = parseISO(ev.date);
+			const today = new Date();
+			return isSameDate(evDate, today) || isAfter(evDate, today);
+		})
+		.sort((a, b) => (a.date > b.date ? 1 : -1));
+
+	// Group events by date for sidebar selection
+	const eventsByDate = filteredUpcomingEvents.reduce<Record<string, Event[]>>(
+		(acc, ev) => {
+			acc[ev.date] = acc[ev.date] || [];
+			acc[ev.date].push(ev);
+			return acc;
+		},
+		{}
+	);
+
+	// Sidebar events for selectedDate or all upcoming if no selectedDate
+	const sidebarEvents = selectedDate
+		? eventsByDate[formatDateKey(selectedDate)] || []
+		: filteredUpcomingEvents;
+
+	// Scroll to selected event in sidebar
+	useEffect(() => {
+		if (selectedEventId) {
+			const ref = eventRefs.current[selectedEventId];
+			if (ref) {
+				ref.scrollIntoView({ behavior: "smooth", block: "center" });
+			}
+		}
+	}, [selectedEventId]);
+
+	// Handle clicks outside calendar and sidebar to clear selectedDate (show all events)
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			const calendarEl = calendarRef.current;
+			const sidebarEl = containerRef.current;
+			if (
+				calendarEl &&
+				sidebarEl &&
+				!calendarEl.contains(event.target as Node) &&
+				!sidebarEl.contains(event.target as Node)
+			) {
+				setSelectedDate(null);
+				setSelectedEventId(null);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
 	return (
 		<>
-			<div className="max-w-md mx-auto p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800 dark:border-gray-700">
+			<div className="max-w-5xl mx-auto px-6 py-6 border rounded-lg shadow-md bg-white dark:bg-gray-800 dark:border-gray-700">
 				<div className="flex justify-end mb-2">
 					<Button
 						variant="ghost"
@@ -206,11 +378,108 @@ const Calendar: React.FC = () => {
 						{isDarkMode ? "🌞 Light" : "🌙 Dark"}
 					</Button>
 				</div>
+
 				{header()}
-				{daysOfWeek()}
-				{cells()}
+
+				<div className="flex flex-col md:flex-row md:gap-x-8">
+					{/* Calendar grid with ref */}
+					<div
+						className="md:w-2/3 max-w-[600px] mx-auto md:mx-0"
+						ref={calendarRef}
+					>
+						{daysOfWeek()}
+						{cells()}
+					</div>
+
+					{/* Upcoming events sidebar, height matched to calendar */}
+					<aside
+						className="md:w-1/3 mt-6 md:mt-0 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
+						aria-label="Upcoming events"
+						style={{
+							maxHeight: calendarRef.current?.offsetHeight
+								? `${calendarRef.current.offsetHeight}px`
+								: "600px",
+						}}
+					>
+						<h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+							{selectedDate
+								? `Events on ${format(selectedDate, "PPP")}`
+								: "Upcoming Events"}
+						</h3>
+
+						{/* DROPDOWN REMOVED */}
+
+						<div
+							ref={containerRef}
+							className="flex-grow overflow-y-auto pr-2"
+							tabIndex={0}
+						>
+							{sidebarEvents.length === 0 ? (
+								<p className="text-gray-600 dark:text-gray-400">
+									{selectedDate
+										? "No events on this day."
+										: "No upcoming events."}
+								</p>
+							) : (
+								<div className="space-y-3">
+									{sidebarEvents.map((ev) => (
+										<div
+											key={ev.id}
+											ref={(el) => {
+												eventRefs.current[ev.id] = el;
+											}}
+											tabIndex={0}
+											className={`border border-gray-300 dark:border-gray-700 rounded p-2 bg-white dark:bg-gray-800 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${
+												ev.id === selectedEventId
+													? "ring-2 ring-blue-500 dark:ring-blue-400"
+													: ""
+											}`}
+											onClick={() => {
+												setSelectedEventId(ev.id);
+												setSelectedDate(parseISO(ev.date));
+												setCurrentMonth(parseISO(ev.date));
+												openEditEventDialog(ev);
+											}}
+											onDoubleClick={() => openEditEventDialog(ev)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													e.preventDefault();
+													setSelectedEventId(ev.id);
+													setSelectedDate(parseISO(ev.date));
+													setCurrentMonth(parseISO(ev.date));
+													openEditEventDialog(ev);
+												}
+												if (e.key === "e" || e.key === "E") {
+													e.preventDefault();
+													openEditEventDialog(ev);
+												}
+											}}
+											title={ev.title}
+											role="button"
+											aria-pressed={ev.id === selectedEventId}
+											aria-label={`Event ${ev.title} on ${format(
+												parseISO(ev.date),
+												"PPP"
+											)}. Click to edit.`}
+										>
+											<div className="flex justify-between items-center">
+												<span className="font-semibold text-blue-600 dark:text-blue-400 truncate">
+													{ev.title}
+												</span>
+												<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+													{format(parseISO(ev.date), "PPP")}
+												</span>
+											</div>
+										</div>
+									))}
+								</div>
+							)}
+						</div>
+					</aside>
+				</div>
 			</div>
 
+			{/* Add/Edit event dialog */}
 			<Dialog
 				open={isDialogOpen}
 				onOpenChange={setIsDialogOpen}
@@ -218,40 +487,44 @@ const Calendar: React.FC = () => {
 				<DialogContent className="bg-white dark:bg-gray-900 dark:text-gray-100">
 					<DialogHeader>
 						<DialogTitle>
-							Add Event on {format(selectedDate, "PPP")}
+							{editEventId ? "Edit Event" : "Add Event"} on{" "}
+							{selectedDate ? format(selectedDate, "PPP") : ""}
 						</DialogTitle>
 					</DialogHeader>
 					<div className="grid gap-4 py-4">
 						<div className="flex flex-col space-y-1">
-							{/*<Label
+							<label
 								htmlFor="event-title"
-								className="dark:text-gray-200"
+								className="dark:text-gray-200 text-sm font-medium"
 							>
 								Event Title
-							</Label>
-							<Input
+							</label>
+							<input
 								id="event-title"
 								type="text"
 								value={newEventTitle}
 								onChange={(e) => setNewEventTitle(e.target.value)}
 								placeholder="Enter event title"
 								autoFocus
-								className="dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-100"
-							/>*/}
+								className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-100"
+							/>
 						</div>
 					</div>
 					<DialogFooter>
 						<Button
 							variant="outline"
-							onClick={() => setIsDialogOpen(false)}
+							onClick={() => {
+								setIsDialogOpen(false);
+								setEditEventId(null);
+							}}
 						>
 							Cancel
 						</Button>
 						<Button
-							onClick={addEvent}
+							onClick={addOrEditEvent}
 							disabled={!newEventTitle.trim()}
 						>
-							Add Event
+							{editEventId ? "Save" : "Add Event"}
 						</Button>
 					</DialogFooter>
 				</DialogContent>
