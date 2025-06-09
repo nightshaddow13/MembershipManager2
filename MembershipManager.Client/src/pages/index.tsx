@@ -1,15 +1,16 @@
 import Calendar, { Event as CalendarEvent } from "@/components/Calendar";
 import CreateSidebar from "@/components/CreateSidebar";
-import EditSidebar from "@/components/EditSidebar";
 import Layout from "@/components/Layout";
-import { QueryEvent, Event, CreateEvent, EventType, State } from "@/dtos";
+import { QueryEvent, CreateEvent, EventType, State } from "@/dtos";
 import { useApp, useClient } from "@/gateway";
 import { FormInput, InputType } from "@/types";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
 	const client = useClient();
 	const app = useApp();
+	const navigate = useNavigate();
 
 	const [newEvent, setNewEvent] = useState<boolean>(false);
 	const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -47,8 +48,7 @@ const Index = () => {
 	};
 
 	const handleEditEvent = async (event: CalendarEvent) => {
-		await refreshEvents();
-		// Navigate to external page for editing event by id
+		navigate(`/events/event/${event.id}`);
 	};
 
 	const createInputs: FormInput[] = [
