@@ -1,25 +1,37 @@
-import Calendar, { Event } from "@/components/Calendar";
+import Calendar, { Event as CalendarEvent } from "@/components/Calendar";
 import Layout from "@/components/Layout";
-
-const sampleEvents: Event[] = [
-	{ id: "1", datetime: "2025-06-10T09:00:00-04:00", title: "Meeting with Bob" },
-	{ id: "2", datetime: "2025-06-10T12:30:00-04:00", title: "Lunch with Alice" },
-	{ id: "3", datetime: "2025-06-11T17:00:00-04:00", title: "Project deadline" },
-	{ id: "4", datetime: "2025-06-12T10:00:00-04:00", title: "Call with client" },
-	{ id: "5", datetime: "2025-06-12T09:00:00-04:00", title: "Team standup" },
-	{
-		id: "6",
-		datetime: "2025-06-15T15:00:00-04:00",
-		title: "Doctor appointment",
-	},
-];
+import { QueryEvent, Event } from "@/dtos";
+import { useClient } from "@/gateway";
+import { useEffect, useState } from "react";
 
 const Index = () => {
-	const handleAddEvent = (date: Date) => {
+	const client = useClient();
+
+	const [events, setEvents] = useState<CalendarEvent[]>([]);
+	useEffect(() => {
+		(async () => await refreshEvents())();
+	}, []);
+
+	const refreshEvents = async () => {
+		const api = await client.api(new QueryEvent({}));
+		if (api.succeeded) {
+			const events = api.response!.results ?? [];
+			const mappedEvents: CalendarEvent[] = events.map((event) => ({
+				id: `${event.id}`,
+				datetime: event.dateTime,
+				title: event.description,
+			}));
+			setEvents(mappedEvents);
+		}
+	};
+
+	const handleAddEvent = async (date: Date) => {
+		await refreshEvents();
 		// Navigate to external page for adding event, pass date as query param
 	};
 
-	const handleEditEvent = (event: Event) => {
+	const handleEditEvent = async (event: CalendarEvent) => {
+		await refreshEvents();
 		// Navigate to external page for editing event by id
 	};
 
@@ -27,7 +39,7 @@ const Index = () => {
 		<Layout title="React SPA with Vite + TypeScript">
 			<div className="mt-5">
 				<Calendar
-					events={sampleEvents}
+					events={events}
 					onAddEvent={handleAddEvent}
 					onEditEvent={handleEditEvent}
 					className="max-w-5xl mx-auto"
