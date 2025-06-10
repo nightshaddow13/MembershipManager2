@@ -363,10 +363,6 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 									d="M12 4v16m8-8H4"
 								/>
 							</svg>
-							{/* Tooltip */}
-							<span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
-								Add new event
-							</span>
 						</button>
 					</div>
 
@@ -419,14 +415,14 @@ const EventCalendar: React.FC<EventCalendarProps> = ({
 									>
 										<div className="flex justify-between items-center">
 											<span className="font-semibold text-blue-600 dark:text-blue-400 truncate">
-												{/* Display time only when a date is selected */}
-												{selectedDate && (
-													<span className="font-mono mr-1 text-xs text-gray-700 dark:text-gray-300">
-														{format(parseEventDateTime(ev), "p")}
-													</span>
-												)}
 												{ev.title}
 											</span>
+											{/* Display time only when a date is selected */}
+											{selectedDate && (
+												<span className="font-mono mr-1 text-xs text-gray-500 dark:text-gray-400">
+													{format(parseEventDateTime(ev), "p")}
+												</span>
+											)}
 											{!selectedDate && (
 												<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
 													{format(parseEventDateTime(ev), "PPP")}

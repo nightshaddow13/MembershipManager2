@@ -40,7 +40,7 @@ export default () => {
 									to="/units"
 									className={navClass}
 								>
-									Units
+									Unit Management
 								</NavLink>
 							</li>
 							<li className="relative flex flex-wrap just-fu-start m-0">
@@ -48,15 +48,15 @@ export default () => {
 									to="/schools"
 									className={navClass}
 								>
-									Schools
+									School Management
 								</NavLink>
 							</li>
 							<li className="relative flex flex-wrap just-fu-start m-0">
 								<NavLink
-									to="/events"
+									to="https://localhost:5001/locode"
 									className={navClass}
 								>
-									Events
+									Locode (API)
 								</NavLink>
 							</li>
 							<li className="relative flex flex-wrap just-fu-start m-0">
@@ -64,7 +64,7 @@ export default () => {
 									to="/development"
 									className={navClass}
 								>
-									Development
+									Development Info
 								</NavLink>
 							</li>
 							{auth ? (

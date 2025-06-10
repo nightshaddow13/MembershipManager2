@@ -50,8 +50,13 @@ public enum EventType
 
 [ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Events"), Description("Find Events")]
+[Route("/events", "GET")]
+[Route("/events/{Id}", "GET")]
 [AutoApply(Behavior.AuditQuery)]
-public class QueryEvent : QueryDb<Event> { }
+public class QueryEvent : QueryDb<Event>
+{
+    public int? Id { get; set; }
+}
 
 [ValidateHasRole(Roles.Committee)]
 [Tag("Events"), Description("Create a new Event")]

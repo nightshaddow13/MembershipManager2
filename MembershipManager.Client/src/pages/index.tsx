@@ -4,6 +4,7 @@ import Layout from "@/components/Layout";
 import { QueryEvent, CreateEvent, EventType, State } from "@/dtos";
 import { useApp, useClient } from "@/gateway";
 import { FormInput, InputType } from "@/types";
+import { ValidateAuth } from "@/useAuth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -127,7 +128,7 @@ const Index = () => {
 	];
 
 	return (
-		<Layout title="React SPA with Vite + TypeScript">
+		<Layout title="Membership Manager - Events">
 			<div className="mt-5">
 				<Calendar
 					events={events}
@@ -149,4 +150,4 @@ const Index = () => {
 	);
 };
 
-export default Index;
+export default ValidateAuth(Index, { role: "NewMemberCoordinator" });
