@@ -1,6 +1,6 @@
 /* Options:
-Date: 2025-05-26 21:42:24
-Version: 8.72
+Date: 2025-06-09 21:17:47
+Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
 
@@ -964,9 +964,12 @@ export class QueryDistrict extends QueryDb<District> implements IReturn<QueryRes
 }
 
 /** @description Find Events */
+// @Route("/events", "GET")
+// @Route("/events/{Id}", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
 export class QueryEvent extends QueryDb<Event> implements IReturn<QueryResponse<Event>>
 {
+    public id?: number;
 
     public constructor(init?: Partial<QueryEvent>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QueryEvent'; }
@@ -1483,6 +1486,7 @@ export class CreateSchool implements IReturn<IdResponse>, ICreateDb<School>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class UpdateSchool implements IReturn<IdResponse>, IPatchDb<School>
 {
+    public id: number;
     public description: string;
     public gradeLevels: GradeLevels;
     public address: string;
