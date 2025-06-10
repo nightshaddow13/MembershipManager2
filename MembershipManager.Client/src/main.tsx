@@ -11,8 +11,6 @@ import {
 	BrowserRouter as Router,
 	useRoutes,
 	useLocation,
-	Route,
-	Routes,
 } from "react-router-dom";
 
 import routes from "~react-pages";
@@ -20,10 +18,6 @@ import routes from "~react-pages";
 import press from "virtual:press";
 import { PressContext } from "./contexts";
 import { useApp } from "@/gateway";
-import Index from "./pages/events";
-import { MutatorCallback, MutatorOptions } from "swr";
-import { AuthenticateResponse } from "./dtos";
-import { ValidateAuth } from "./useAuth";
 
 useApp().load();
 

@@ -42,7 +42,7 @@ const Index = () => {
 		}
 	};
 
-	const handleAddEvent = async (date: Date) => {
+	const handleAddEvent = async () => {
 		setNewEvent(true);
 		await refreshEvents();
 		// Navigate to external page for adding event, pass date as query param
