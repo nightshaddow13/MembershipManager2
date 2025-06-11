@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,6 +10,7 @@
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
     <RootNamespace>MembershipManager</RootNamespace>
     <PublishProfile>DefaultContainer</PublishProfile>
+    <UserSecretsId>e345a2d5-8c81-4796-bb45-e72288972b05</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
