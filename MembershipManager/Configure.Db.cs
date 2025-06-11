@@ -11,7 +11,7 @@ public class ConfigureDb : IHostingStartup
 {
     public void Configure(IWebHostBuilder builder) => builder
         .ConfigureServices((context, services) => {
-            var connectionString = context.Configuration.GetConnectionString("SQLAZURECONNSTR_DefaultConnection")
+            var connectionString = context.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")
                 ?? "Data Source=XAVIER-ASUS;Initial Catalog=MMData;Integrated Security=True;Trust Server Certificate=True";
             
             services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(
