@@ -1,12 +1,20 @@
-# Stage 1: Base runtime image
+# Stage 1: Base runtime image with fixed user
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+
+# Create a group and user with fixed UID and GID (1000)
+RUN addgroup --gid 1000 appgroup && \
+    adduser --uid 1000 --gid 1000 --shell /bin/sh --disabled-password --gecos "" appuser
+
 WORKDIR /app
+
+# Create writable directory and set ownership to the new user
+RUN mkdir -p /app/App_Data/jobs && chown -R appuser:appgroup /app/App_Data
+
+# Switch to the new user
+USER appuser
+
 EXPOSE 8080
 EXPOSE 8081
-
-# Create writable jobs directory and fix permissions
-RUN mkdir -p /app/App_Data/jobs && chmod -R 777 /app/App_Data
 
 # Stage 2: Build React client
 FROM node:18-alpine AS client-build
