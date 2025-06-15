@@ -1,8 +1,37 @@
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Event, QueryEvent } from "@/dtos";
+import { Event, Note, QueryEvent } from "@/dtos";
 import { useClient } from "@/gateway";
+import { Card } from "@/components/ui/card";
+import NotesList from "@/components/NotesList";
+
+const initialNotes: Note[] = [
+	{
+		id: 1,
+		description: "Initial note 1",
+		schoolsLink: [],
+		unitsLink: [],
+		eventsLinks: [],
+		createdDate: "",
+		createdBy: "",
+		modifiedDate: "",
+		modifiedBy: "",
+		deletedBy: "",
+	},
+	{
+		id: 2,
+		description: "Initial note 2",
+		schoolsLink: [],
+		unitsLink: [],
+		eventsLinks: [],
+		createdDate: "",
+		createdBy: "",
+		modifiedDate: "",
+		modifiedBy: "",
+		deletedBy: "",
+	},
+];
 
 const EventPage = () => {
 	const client = useClient();
@@ -47,6 +76,10 @@ const EventPage = () => {
 		return str.replace(/([A-Z])/g, " $1").trim();
 	}
 
+	const handleNotesChange = (updatedNotes: Note[]) => {
+		console.log("Notes updated:", updatedNotes);
+	};
+
 	return (
 		<Layout
 			title={`MM - ${event?.description} ${splitPascalCase(
@@ -58,28 +91,36 @@ const EventPage = () => {
 					{event?.description} {splitPascalCase(event?.eventType ?? "")}
 				</h1>
 
-				<div className="flex space-x-8 text-lg">
-					<div className="flex flex-col items-center">
-						<span className="font-semibold">Date:</span>
-						<span>
-							{formatDateTimeOffset(event?.dateTime ?? "").date || "TBD"}
-						</span>
+				<Card className="max-w-4xl mx-auto p-6 space-y-6 bg-white dark:bg-gray-800">
+					<div className="flex space-x-8 text-lg justify-center">
+						<div className="flex flex-col items-center">
+							<span className="font-semibold">Date:</span>
+							<span>
+								{formatDateTimeOffset(event?.dateTime ?? "").date || "TBD"}
+							</span>
+						</div>
+						<div className="flex flex-col items-center">
+							<span className="font-semibold">Time:</span>
+							<span>
+								{formatDateTimeOffset(event?.dateTime ?? "").time || "TBD"}
+							</span>
+						</div>
 					</div>
-					<div className="flex flex-col items-center">
-						<span className="font-semibold">Time:</span>
-						<span>
-							{formatDateTimeOffset(event?.dateTime ?? "").time || "TBD"}
-						</span>
-					</div>
-				</div>
 
-				{/* Address Section */}
-				<div className="text-center text-lg">
-					<span className="font-semibold">Address:</span>
-					<p>
-						{event?.address}, {event?.city}, {event?.state} {event?.zipCode}
-					</p>
-				</div>
+					{/* Address Section */}
+					<div className="text-center text-lg">
+						<span className="font-semibold">Address:</span>
+						<p>
+							{event?.address}, {event?.city}, {event?.state} {event?.zipCode}
+						</p>
+					</div>
+				</Card>
+			</div>
+			<div className="mt-5">
+				<NotesList
+					initialNotes={initialNotes}
+					onChange={handleNotesChange}
+				/>
 			</div>
 		</Layout>
 	);
