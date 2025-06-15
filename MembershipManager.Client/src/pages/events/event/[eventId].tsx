@@ -91,36 +91,42 @@ const EventPage = () => {
 					{event?.description} {splitPascalCase(event?.eventType ?? "")}
 				</h1>
 
-				<Card className="max-w-4xl mx-auto p-6 space-y-6 bg-white dark:bg-gray-800">
-					<div className="flex space-x-8 text-lg justify-center">
-						<div className="flex flex-col items-center">
-							<span className="font-semibold">Date:</span>
-							<span>
-								{formatDateTimeOffset(event?.dateTime ?? "").date || "TBD"}
-							</span>
+				{/* Container for side-by-side cards */}
+				<div className="flex flex-col md:flex-row md:space-x-6 mx-auto max-w-6xl w-full px-4">
+					{/* Event Info Card */}
+					<Card className="flex-1 p-6 bg-white dark:bg-gray-800 mb-6 md:mb-0">
+						<div className="flex space-x-8 text-lg justify-center">
+							<div className="flex flex-col items-center">
+								<span className="font-semibold">Date:</span>
+								<span>
+									{formatDateTimeOffset(event?.dateTime ?? "").date || "TBD"}
+								</span>
+							</div>
+							<div className="flex flex-col items-center">
+								<span className="font-semibold">Time:</span>
+								<span>
+									{formatDateTimeOffset(event?.dateTime ?? "").time || "TBD"}
+								</span>
+							</div>
 						</div>
-						<div className="flex flex-col items-center">
-							<span className="font-semibold">Time:</span>
-							<span>
-								{formatDateTimeOffset(event?.dateTime ?? "").time || "TBD"}
-							</span>
-						</div>
-					</div>
 
-					{/* Address Section */}
-					<div className="text-center text-lg">
-						<span className="font-semibold">Address:</span>
-						<p>
-							{event?.address}, {event?.city}, {event?.state} {event?.zipCode}
-						</p>
+						{/* Address Section */}
+						<div className="text-center text-lg mt-4">
+							<span className="font-semibold">Address:</span>
+							<p>
+								{event?.address}, {event?.city}, {event?.state} {event?.zipCode}
+							</p>
+						</div>
+					</Card>
+
+					{/* Notes List Card */}
+					<div className="flex-1">
+						<NotesList
+							initialNotes={initialNotes}
+							onChange={handleNotesChange}
+						/>
 					</div>
-				</Card>
-			</div>
-			<div className="mt-5">
-				<NotesList
-					initialNotes={initialNotes}
-					onChange={handleNotesChange}
-				/>
+				</div>
 			</div>
 		</Layout>
 	);
