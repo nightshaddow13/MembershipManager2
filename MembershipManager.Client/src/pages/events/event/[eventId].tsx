@@ -123,7 +123,9 @@ const EventPage = () => {
 					<div className="flex-1">
 						<NotesList
 							initialNotes={initialNotes}
-							onChange={handleNotesChange}
+							onCreate={() => 1}
+							onEdit={() => 1}
+							onDelete={() => 1}
 						/>
 					</div>
 				</div>

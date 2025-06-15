@@ -7,12 +7,16 @@ import { Trash2 } from "lucide-react";
 
 interface NotesListProps {
 	initialNotes?: Note[];
-	onChange?: (notes: Note[]) => void;
+	onCreate?: (note: Note) => void;
+	onEdit?: (note: Note) => void;
+	onDelete?: (deletedNoteIds: number[]) => void;
 }
 
 const NotesList: React.FC<NotesListProps> = ({
 	initialNotes = [],
-	onChange,
+	onCreate,
+	onEdit,
+	onDelete,
 }) => {
 	const [notes, setNotes] = useState<Note[]>(initialNotes);
 	const [editingId, setEditingId] = useState<number | null>(null);
@@ -49,7 +53,7 @@ const NotesList: React.FC<NotesListProps> = ({
 			};
 			const updatedNotes = [...notes, newNote];
 			setNotes(updatedNotes);
-			onChange?.(updatedNotes);
+			onCreate?.(newNote);
 		} else {
 			// Edit existing
 			const updatedNotes = notes.map((note) =>
@@ -58,7 +62,10 @@ const NotesList: React.FC<NotesListProps> = ({
 					: note
 			);
 			setNotes(updatedNotes);
-			onChange?.(updatedNotes);
+			const updatedNote = updatedNotes.find((note) => note.id === editingId);
+			if (updatedNote) {
+				onEdit?.(updatedNote);
+			}
 		}
 		setEditingId(null);
 		setDraftDescription("");
@@ -73,11 +80,18 @@ const NotesList: React.FC<NotesListProps> = ({
 		e.stopPropagation(); // Prevent triggering edit on card click
 		const updatedNotes = notes.filter((note) => note.id !== id);
 		setNotes(updatedNotes);
-		onChange?.(updatedNotes);
+
+		// Call the onDelete with an array of deleted note IDs
+		// Here, only one ID is deleted, but this could be extended for batch deletes
+		onDelete?.([id]);
+
 		if (editingId === id) {
 			cancelEditing();
 		}
 	};
+
+	// You can implement additional batch delete or other functions here,
+	// and call onDelete with an array of note IDs.
 
 	return (
 		<Card className="max-w-3xl mx-auto p-6 space-y-6 bg-white dark:bg-gray-800">
