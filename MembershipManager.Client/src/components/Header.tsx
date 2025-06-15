@@ -53,7 +53,7 @@ export default () => {
 							</li>
 							<li className="relative flex flex-wrap just-fu-start m-0">
 								<NavLink
-									to="https://localhost:5001/locode"
+									to="https://membership.goss.quest/locode"
 									className={navClass}
 								>
 									Locode (API)
