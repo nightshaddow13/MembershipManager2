@@ -26,19 +26,17 @@ services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 
 services.ConfigureApplicationCookie(options => options.DisableRedirectsForApis());
 
-var blobUri = new Uri("https://campmasterstorage.blob.core.windows.net/dataprotection-keys?sv=2023-01-03&st=2025-06-15T02%3A52%3A16Z&se=2025-12-16T03%3A52%3A00Z&sr=c&sp=rwlt&sig=rcVP9tQkG7fPBzc%2BBSY8oCDQIij5shTMnAnTJWfB1so%3D");
+//// Data Protection keys folder on Linux App Service
+//var keyStorageDirectory = "/home/data_protection_keys";
 
-// Data Protection keys folder on Linux App Service
-var keyStorageDirectory = "/home/data_protection_keys";
+//// Ensure directory exists
+//if (!Directory.Exists(keyStorageDirectory))
+//{
+//    Directory.CreateDirectory(keyStorageDirectory);
+//}
 
-// Ensure directory exists
-if (!Directory.Exists(keyStorageDirectory))
-{
-    Directory.CreateDirectory(keyStorageDirectory);
-}
-
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(keyStorageDirectory));
+//builder.Services.AddDataProtection()
+//    .PersistKeysToFileSystem(new DirectoryInfo(keyStorageDirectory));
 
 // Add application services.
 services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
