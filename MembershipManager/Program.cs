@@ -28,8 +28,17 @@ services.ConfigureApplicationCookie(options => options.DisableRedirectsForApis()
 
 var blobUri = new Uri("https://campmasterstorage.blob.core.windows.net/dataprotection-keys?sv=2023-01-03&st=2025-06-15T02%3A44%3A36Z&se=2025-12-16T03%3A44%3A00Z&sr=c&sp=rwl&sig=2rwlMaibTp4T91lpPkYPVEtxHr2AF3uWCmLU8L5i9S0%3D");
 
+// Data Protection keys folder on Linux App Service
+var keyStorageDirectory = "/home/data_protection_keys";
+
+// Ensure directory exists
+if (!Directory.Exists(keyStorageDirectory))
+{
+    Directory.CreateDirectory(keyStorageDirectory);
+}
+
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(keyStoragePath));
+    .PersistKeysToFileSystem(new DirectoryInfo(keyStorageDirectory));
 
 // Add application services.
 services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
