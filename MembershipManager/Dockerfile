@@ -1,14 +1,11 @@
 # Stage 1: Base runtime image with fixed user
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
-# Create a group and user with fixed UID and GID (1000)
 RUN addgroup --gid 1000 appgroup && \
-    adduser --uid 1000 --gid 1000 --shell /bin/sh --disabled-password --gecos "" appuser
-
-WORKDIR /app
-
-# Create writable directory and set ownership to the new user
-RUN mkdir -p /app/App_Data/jobs && chown -R appuser:appgroup /app/App_Data
+    adduser --uid 1000 --gid 1000 --shell /bin/sh --disabled-password --gecos "" appuser && \
+    mkdir -p /app/App_Data/jobs && \
+    chown -R appuser:appgroup /app/App_Data && \
+    chmod -R u+rwx /app/App_Data
 
 # Switch to the new user
 USER appuser
