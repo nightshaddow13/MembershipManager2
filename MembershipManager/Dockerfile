@@ -8,7 +8,9 @@ RUN addgroup --gid 1000 appgroup && \
 WORKDIR /app
 
 # Create writable directory and set ownership to the new user
-RUN mkdir -p /app/App_Data/jobs && chown -R appuser:appgroup /app/App_Data
+RUN mkdir -p /app/App_Data/jobs /app/App_Data/requests && \
+    chown -R appuser:appgroup /app/App_Data && \
+    chmod -R u+rwx /app/App_Data
 
 # Switch to the new user
 USER appuser
