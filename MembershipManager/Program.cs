@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MembershipManager.Data;
 using MembershipManager.ServiceInterface;
+using Azure.Storage.Blobs;
 
 AppHost.RegisterKey();
 
@@ -22,8 +23,10 @@ services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 
 services.ConfigureApplicationCookie(options => options.DisableRedirectsForApis());
 
+var blobUri = new Uri("https://campmasterstorage.blob.core.windows.net/dataprotection-keys");
+
 services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("App_Data"));
+    .PersistKeysToAzureBlobStorage(blobUri);
 
 // Add application services.
 services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
