@@ -1,7 +1,7 @@
-//using Microsoft.AspNetCore.Identity;
-//using ServiceStack.Jobs;
-//using MembershipManager.Data;
-//using MembershipManager.ServiceInterface;
+using Microsoft.AspNetCore.Identity;
+using ServiceStack.Jobs;
+using MembershipManager.Data;
+using MembershipManager.ServiceInterface;
 
 //[assembly: HostingStartup(typeof(MembershipManager.ConfigureBackgroundJobs))]
 
@@ -21,7 +21,7 @@
 //                c.GetRequiredService<ILogger<SendEmailCommand>>(),
 //                c.GetRequiredService<IBackgroundJobs>(),
 //                c.GetRequiredService<SmtpConfig>()));
-            
+
 //            services.AddPlugin(new CommandsFeature());
 //            services.AddPlugin(new BackgroundsJobFeature());
 //            services.AddHostedService<JobsHostedService>();
@@ -43,7 +43,7 @@
 //                    log.LogWarning("SMTP is configured with <{FromEmail}> {FromName}", smtpConfig.FromEmail, smtpConfig.FromName);
 //                }
 //            }
-            
+
 //            var jobs = services.GetRequiredService<IBackgroundJobs>();
 //            // Example of registering a Recurring Job to run Every Hour
 //            //jobs.RecurringCommand<MyCommand>(Schedule.Hourly);
@@ -55,7 +55,7 @@
 //    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 //    {
 //        await jobs.StartAsync(stoppingToken);
-        
+
 //        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
 //        while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
 //        {
