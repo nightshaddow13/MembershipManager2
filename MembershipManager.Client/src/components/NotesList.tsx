@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Note } from "@/dtos";
+import { CreateNote, DeleteNote, Note, QueryNotes, UpdateNote } from "@/dtos";
 import { Trash2 } from "lucide-react";
+import { useClient } from "@/gateway";
 
 interface NotesListProps {
 	initialNotes?: Note[];
-	onCreate?: (note: Note) => void;
-	onEdit?: (note: Note) => void;
+	onCreate?: (note: CreateNote) => void;
+	onEdit?: (note: UpdateNote) => void;
 	onDelete?: (deletedNoteIds: number[]) => void;
 }
 
@@ -18,9 +19,15 @@ const NotesList: React.FC<NotesListProps> = ({
 	onEdit,
 	onDelete,
 }) => {
+	const client = useClient();
+
 	const [notes, setNotes] = useState<Note[]>(initialNotes);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [draftDescription, setDraftDescription] = useState("");
+	const [createRequest, setCreateRequest] = useState(() => new CreateNote());
+	useEffect(() => {
+		(async () => await refreshThings())();
+	}, []);
 
 	// Start editing a note or create new
 	const startEditing = (note?: Note) => {
@@ -33,62 +40,66 @@ const NotesList: React.FC<NotesListProps> = ({
 		}
 	};
 
+	const refreshThings = async () => {
+		const api = await client.api(new QueryNotes());
+		if (api.succeeded) {
+			setNotes(api.response!.results ?? []);
+		}
+	};
+
 	// Save the note (new or edited)
-	const saveNote = () => {
+	async function saveNote() {
 		if (!draftDescription.trim()) return;
 
 		if (editingId === -1) {
 			// New note
-			const newNote: Note = {
-				id: Date.now(), // temporary id, replace with real id from backend
+			const newNote = new CreateNote({
 				description: draftDescription.trim(),
-				schoolsLink: [],
-				unitsLink: [],
-				eventsLinks: [],
-				createdDate: "",
-				createdBy: "",
-				modifiedDate: "",
-				modifiedBy: "",
-				deletedBy: "",
-			};
-			const updatedNotes = [...notes, newNote];
-			setNotes(updatedNotes);
-			onCreate?.(newNote);
+			});
+			const api = await client.api(newNote);
+			if (api.succeeded) {
+				onCreate?.(newNote);
+				refreshThings();
+			}
 		} else {
 			// Edit existing
-			const updatedNotes = notes.map((note) =>
-				note.id === editingId
-					? { ...note, description: draftDescription.trim() }
-					: note
-			);
-			setNotes(updatedNotes);
-			const updatedNote = updatedNotes.find((note) => note.id === editingId);
-			if (updatedNote) {
+			const updatedNote = new UpdateNote({
+				id: editingId!,
+				description: draftDescription.trim(),
+			});
+			const api = await client.api(updatedNote);
+			if (api.succeeded) {
 				onEdit?.(updatedNote);
+				refreshThings();
 			}
 		}
 		setEditingId(null);
 		setDraftDescription("");
-	};
+	}
 
 	const cancelEditing = () => {
 		setEditingId(null);
 		setDraftDescription("");
 	};
 
-	const removeNote = (id: number, e: React.MouseEvent) => {
+	async function removeNote(id: number, e: React.MouseEvent) {
 		e.stopPropagation(); // Prevent triggering edit on card click
-		const updatedNotes = notes.filter((note) => note.id !== id);
-		setNotes(updatedNotes);
 
+		const api = await client.api(new DeleteNote({ id: id }));
 		// Call the onDelete with an array of deleted note IDs
 		// Here, only one ID is deleted, but this could be extended for batch deletes
-		onDelete?.([id]);
+		if (api.succeeded) {
+			onDelete?.([id]);
+			refreshThings();
+		}
+
+		const updatedNotes = notes.filter((note) => note.id !== id);
+		setNotes(updatedNotes);
 
 		if (editingId === id) {
 			cancelEditing();
 		}
-	};
+	}
 
 	// You can implement additional batch delete or other functions here,
 	// and call onDelete with an array of note IDs.
