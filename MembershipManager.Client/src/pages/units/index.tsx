@@ -82,11 +82,11 @@ const UnitsPage: React.FC = () => {
 							<CardContent className="flex flex-col justify-between flex-grow">
 								<p>
 									<strong>Upcoming Events:</strong>{" "}
-									{/*unit.upcomingEventsCount ?? 0*/}
+									{unit.eventsLink.length ?? 0}
 								</p>
 								<p>
 									<strong>Linked Schools:</strong>{" "}
-									{/*unit.linkedSchoolsCount ?? 0*/}
+									{unit.schoolsLink.length ?? 0}
 								</p>
 							</CardContent>
 							<CardFooter>
