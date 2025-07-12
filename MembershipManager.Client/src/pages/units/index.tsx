@@ -14,6 +14,9 @@ import {
 	CardFooter,
 } from "@/components/ui/card";
 
+// Import icons from shadcn or another icon library you use
+import { CalendarDays, Building } from "lucide-react"; // Example: lucide-react icons
+
 const UnitsPage: React.FC = () => {
 	const client = useClient();
 	const navigate = useNavigate();
@@ -79,19 +82,17 @@ const UnitsPage: React.FC = () => {
 									{unit.type} {unit.number}
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="flex flex-col justify-between flex-grow">
-								<p>
-									<strong>Upcoming Events:</strong>{" "}
-									{unit.eventsLink.length ?? 0}
-								</p>
-								<p>
-									<strong>Linked Schools:</strong>{" "}
-									{unit.schoolsLink.length ?? 0}
-								</p>
+							<CardContent className="flex flex-col justify-between flex-grow space-y-2">
+								<div className="flex items-center space-x-2">
+									<CalendarDays className="w-5 h-5 text-muted-foreground" />
+									<span>{unit.eventsLink.length ?? 0} Upcoming Events</span>
+								</div>
+								<div className="flex items-center space-x-2">
+									<Building className="w-5 h-5 text-muted-foreground" />
+									<span>{unit.schoolsLink.length ?? 0} Linked Schools</span>
+								</div>
 							</CardContent>
-							<CardFooter>
-								{/* Optional: Add footer content if needed */}
-							</CardFooter>
+							<CardFooter>{/* Optional footer content */}</CardFooter>
 						</Card>
 					))}
 				</div>
