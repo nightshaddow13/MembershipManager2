@@ -24,7 +24,6 @@ const NotesList: React.FC<NotesListProps> = ({
 	const [notes, setNotes] = useState<Note[]>(initialNotes);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [draftDescription, setDraftDescription] = useState("");
-	const [createRequest, setCreateRequest] = useState(() => new CreateNote());
 	useEffect(() => {
 		(async () => await refreshThings())();
 	}, []);
