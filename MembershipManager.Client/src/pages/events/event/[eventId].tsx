@@ -1,37 +1,10 @@
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Event, Note, QueryEvent } from "@/dtos";
+import { Event, QueryEvent } from "@/dtos";
 import { useClient } from "@/gateway";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
-
-const initialNotes: Note[] = [
-	{
-		id: 1,
-		description: "Initial note 1",
-		schoolsLink: [],
-		unitsLink: [],
-		eventsLinks: [],
-		createdDate: "",
-		createdBy: "",
-		modifiedDate: "",
-		modifiedBy: "",
-		deletedBy: "",
-	},
-	{
-		id: 2,
-		description: "Initial note 2",
-		schoolsLink: [],
-		unitsLink: [],
-		eventsLinks: [],
-		createdDate: "",
-		createdBy: "",
-		modifiedDate: "",
-		modifiedBy: "",
-		deletedBy: "",
-	},
-];
 
 const EventPage = () => {
 	const client = useClient();
@@ -76,10 +49,6 @@ const EventPage = () => {
 		return str.replace(/([A-Z])/g, " $1").trim();
 	}
 
-	const handleNotesChange = (updatedNotes: Note[]) => {
-		console.log("Notes updated:", updatedNotes);
-	};
-
 	return (
 		<Layout
 			title={`MM - ${event?.description} ${splitPascalCase(
@@ -122,7 +91,6 @@ const EventPage = () => {
 					{/* Notes List Card */}
 					<div className="flex-1">
 						<NotesList
-							initialNotes={initialNotes}
 							onCreate={() => 1}
 							onEdit={() => 1}
 							onDelete={() => 1}

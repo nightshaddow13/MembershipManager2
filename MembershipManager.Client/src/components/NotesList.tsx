@@ -7,24 +7,21 @@ import { Trash2 } from "lucide-react";
 import { useClient } from "@/gateway";
 
 interface NotesListProps {
-	initialNotes?: Note[];
 	onCreate?: (note: CreateNote) => void;
 	onEdit?: (note: UpdateNote) => void;
 	onDelete?: (deletedNoteIds: number[]) => void;
 }
 
 const NotesList: React.FC<NotesListProps> = ({
-	initialNotes = [],
 	onCreate,
 	onEdit,
 	onDelete,
 }) => {
 	const client = useClient();
 
-	const [notes, setNotes] = useState<Note[]>(initialNotes);
+	const [notes, setNotes] = useState<Note[]>([]);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [draftDescription, setDraftDescription] = useState("");
-	const [createRequest, setCreateRequest] = useState(() => new CreateNote());
 	useEffect(() => {
 		(async () => await refreshThings())();
 	}, []);
