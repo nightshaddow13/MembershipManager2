@@ -1,6 +1,6 @@
 /* Options:
-Date: 2025-05-26 21:42:24
-Version: 8.72
+Date: 2025-07-14 20:51:58
+Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
 
@@ -128,46 +128,6 @@ export class AuditBase
     public deletedBy: string;
 
     public constructor(init?: Partial<AuditBase>) { (Object as any).assign(this, init); }
-}
-
-export enum RoomType
-{
-    Single = 'Single',
-    Double = 'Double',
-    Queen = 'Queen',
-    Twin = 'Twin',
-    Suite = 'Suite',
-}
-
-/** @description Discount Coupons */
-export class Coupon
-{
-    public id: string;
-    public description: string;
-    public discount: number;
-    public expiryDate: string;
-
-    public constructor(init?: Partial<Coupon>) { (Object as any).assign(this, init); }
-}
-
-/** @description Booking Details */
-export class Booking extends AuditBase
-{
-    public id: number;
-    public name: string;
-    public roomType: RoomType;
-    public roomNumber: number;
-    public bookingStartDate: string;
-    public bookingEndDate?: string;
-    public cost: number;
-    // @References("typeof(MembershipManager.ServiceModel.Coupon)")
-    public couponId?: string;
-
-    public discount: Coupon;
-    public notes?: string;
-    public cancelled?: boolean;
-
-    public constructor(init?: Partial<Booking>) { super(init); (Object as any).assign(this, init); }
 }
 
 export enum UnitType
@@ -309,6 +269,46 @@ export class District extends AuditBase
     public constructor(init?: Partial<District>) { super(init); (Object as any).assign(this, init); }
 }
 
+export enum RoomType
+{
+    Single = 'Single',
+    Double = 'Double',
+    Queen = 'Queen',
+    Twin = 'Twin',
+    Suite = 'Suite',
+}
+
+/** @description Discount Coupons */
+export class Coupon
+{
+    public id: string;
+    public description: string;
+    public discount: number;
+    public expiryDate: string;
+
+    public constructor(init?: Partial<Coupon>) { (Object as any).assign(this, init); }
+}
+
+/** @description Booking Details */
+export class Booking extends AuditBase
+{
+    public id: number;
+    public name: string;
+    public roomType: RoomType;
+    public roomNumber: number;
+    public bookingStartDate: string;
+    public bookingEndDate?: string;
+    public cost: number;
+    // @References("typeof(MembershipManager.ServiceModel.Coupon)")
+    public couponId?: string;
+
+    public discount: Coupon;
+    public notes?: string;
+    public cancelled?: boolean;
+
+    public constructor(init?: Partial<Booking>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class Council extends AuditBase
 {
     public id: number;
@@ -445,138 +445,6 @@ export class QueryResponse<T>
     public constructor(init?: Partial<QueryResponse<T>>) { (Object as any).assign(this, init); }
 }
 
-// @DataContract
-export class AnalyticsLogInfo
-{
-    // @DataMember(Order=1)
-    public id: number;
-
-    // @DataMember(Order=2)
-    public dateTime: string;
-
-    // @DataMember(Order=3)
-    public browser: string;
-
-    // @DataMember(Order=4)
-    public device: string;
-
-    // @DataMember(Order=5)
-    public bot: string;
-
-    // @DataMember(Order=6)
-    public op: string;
-
-    // @DataMember(Order=7)
-    public userId: string;
-
-    // @DataMember(Order=8)
-    public userName: string;
-
-    // @DataMember(Order=9)
-    public apiKey: string;
-
-    // @DataMember(Order=10)
-    public ip: string;
-
-    public constructor(init?: Partial<AnalyticsLogInfo>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class RequestSummary
-{
-    // @DataMember(Order=1)
-    public name: string;
-
-    // @DataMember(Order=2)
-    public totalRequests: number;
-
-    // @DataMember(Order=3)
-    public totalRequestLength: number;
-
-    // @DataMember(Order=4)
-    public minRequestLength: number;
-
-    // @DataMember(Order=5)
-    public maxRequestLength: number;
-
-    // @DataMember(Order=6)
-    public totalDuration: number;
-
-    // @DataMember(Order=7)
-    public minDuration: number;
-
-    // @DataMember(Order=8)
-    public maxDuration: number;
-
-    // @DataMember(Order=9)
-    public status: { [index:number]: number; };
-
-    // @DataMember(Order=10)
-    public durations: { [index:string]: number; };
-
-    // @DataMember(Order=11)
-    public apis: { [index:string]: number; };
-
-    // @DataMember(Order=12)
-    public users: { [index:string]: number; };
-
-    // @DataMember(Order=13)
-    public ips: { [index:string]: number; };
-
-    // @DataMember(Order=14)
-    public apiKeys: { [index:string]: number; };
-
-    public constructor(init?: Partial<RequestSummary>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class AnalyticsReports
-{
-    // @DataMember(Order=1)
-    public id: number;
-
-    // @DataMember(Order=2)
-    public created: string;
-
-    // @DataMember(Order=3)
-    public version: number;
-
-    // @DataMember(Order=4)
-    public apis: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=5)
-    public users: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=6)
-    public tags: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=7)
-    public status: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=8)
-    public days: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=9)
-    public apiKeys: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=10)
-    public ips: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=11)
-    public browsers: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=12)
-    public devices: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=13)
-    public bots: { [index:string]: RequestSummary; };
-
-    // @DataMember(Order=14)
-    public durations: { [index:string]: number; };
-
-    public constructor(init?: Partial<AnalyticsReports>) { (Object as any).assign(this, init); }
-}
-
 export class HelloResponse
 {
     public result: string;
@@ -700,33 +568,6 @@ export class IdResponse
     public responseStatus: ResponseStatus;
 
     public constructor(init?: Partial<IdResponse>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class GetAnalyticsInfoResponse
-{
-    // @DataMember(Order=1)
-    public months: string[];
-
-    // @DataMember(Order=2)
-    public result: AnalyticsLogInfo;
-
-    // @DataMember(Order=3)
-    public responseStatus: ResponseStatus;
-
-    public constructor(init?: Partial<GetAnalyticsInfoResponse>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class GetAnalyticsReportsResponse
-{
-    // @DataMember(Order=1)
-    public result: AnalyticsReports;
-
-    // @DataMember(Order=2)
-    public responseStatus: ResponseStatus;
-
-    public constructor(init?: Partial<GetAnalyticsReportsResponse>) { (Object as any).assign(this, init); }
 }
 
 // @Route("/hello/{Name}")
@@ -875,6 +716,21 @@ export class DeleteTodos implements IReturnVoid, IDelete
     public createResponse() {}
 }
 
+/** @description Find Units */
+// @Route("/units", "GET")
+// @Route("/units/{Id}", "GET")
+// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
+export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
+{
+    public id?: number;
+    public searchTerm?: string;
+
+    public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'QueryUnits'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new QueryResponse<Unit>(); }
+}
+
 /** @description Sign In */
 // @Route("/auth", "GET,POST")
 // @Route("/auth/{provider}", "POST")
@@ -964,9 +820,12 @@ export class QueryDistrict extends QueryDb<District> implements IReturn<QueryRes
 }
 
 /** @description Find Events */
+// @Route("/events", "GET")
+// @Route("/events/{Id}", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
 export class QueryEvent extends QueryDb<Event> implements IReturn<QueryResponse<Event>>
 {
+    public id?: number;
 
     public constructor(init?: Partial<QueryEvent>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QueryEvent'; }
@@ -1039,20 +898,6 @@ export class QuerySchoolNote extends QueryDb<SchoolNote> implements IReturn<Quer
     public getTypeName() { return 'QuerySchoolNote'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<SchoolNote>(); }
-}
-
-/** @description Find Units */
-// @Route("/units", "GET")
-// @Route("/units/{Id}", "GET")
-// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
-{
-    public id?: number;
-
-    public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'QueryUnits'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new QueryResponse<Unit>(); }
 }
 
 /** @description Find Note & Unit Links */
@@ -1483,6 +1328,7 @@ export class CreateSchool implements IReturn<IdResponse>, ICreateDb<School>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class UpdateSchool implements IReturn<IdResponse>, IPatchDb<School>
 {
+    public id: number;
     public description: string;
     public gradeLevels: GradeLevels;
     public address: string;
@@ -1627,53 +1473,5 @@ export class DeleteUnitSchool implements IReturnVoid, IDeleteDb<UnitSchool>
     public getTypeName() { return 'DeleteUnitSchool'; }
     public getMethod() { return 'DELETE'; }
     public createResponse() {}
-}
-
-// @DataContract
-export class GetAnalyticsInfo implements IReturn<GetAnalyticsInfoResponse>, IGet
-{
-    // @DataMember(Order=1)
-    public month?: string;
-
-    // @DataMember(Order=2)
-    public type: string;
-
-    // @DataMember(Order=3)
-    public op: string;
-
-    // @DataMember(Order=4)
-    public apiKey: string;
-
-    // @DataMember(Order=5)
-    public userId: string;
-
-    // @DataMember(Order=6)
-    public ip: string;
-
-    public constructor(init?: Partial<GetAnalyticsInfo>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'GetAnalyticsInfo'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new GetAnalyticsInfoResponse(); }
-}
-
-// @DataContract
-export class GetAnalyticsReports implements IReturn<GetAnalyticsReportsResponse>, IGet
-{
-    // @DataMember(Order=1)
-    public month?: string;
-
-    // @DataMember(Order=2)
-    public filter: string;
-
-    // @DataMember(Order=3)
-    public value: string;
-
-    // @DataMember(Order=4)
-    public force?: boolean;
-
-    public constructor(init?: Partial<GetAnalyticsReports>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'GetAnalyticsReports'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new GetAnalyticsReportsResponse(); }
 }
 

@@ -37,7 +37,7 @@ const UnitsPage: React.FC = () => {
 		async (search: string) => {
 			const query = new QueryUnits();
 			if (search) {
-				query.number = parseInt(search);
+				query.searchTerm = search;
 			}
 			const api = await client.api(query);
 			if (api.succeeded) {
