@@ -49,7 +49,7 @@ const Index = () => {
 	};
 
 	const handleEditEvent = async (event: CalendarEvent) => {
-		navigate(`/events/event/${event.id}`);
+		navigate(`/events/${event.id}`);
 	};
 
 	const createInputs: FormInput[] = [

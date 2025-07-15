@@ -59,6 +59,7 @@ public enum Sex
 public class QueryUnits : QueryDb<Unit>
 {
     public int? Id { get; set; }
+    public string? SearchTerm { get; set; }
 }
 
 [Tag("Units"), Description("Create a new Unit")]
