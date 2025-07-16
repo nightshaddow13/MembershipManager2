@@ -22,16 +22,16 @@ env:
 jobs:
   build-container:
     runs-on: ubuntu-latest
+    # todo: dont forget to set this back!
     if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Extract version from Git tag
+      - name: Extract version from commit SHA
         id: extract_version
         run: |
-          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.0")
-          VERSION=${VERSION#v}
+          VERSION=${GITHUB_SHA::7}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Extracted version: $VERSION"
 
