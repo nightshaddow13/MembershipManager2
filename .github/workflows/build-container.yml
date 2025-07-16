@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - master
+      - 48-update-deployment-pipeline
   workflow_dispatch:
 
 # Only update envs here if you need to change them for this workflow
@@ -26,6 +27,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Extract version from Git tag
+        id: extract_version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.0")
+          VERSION=${VERSION#v}
+          SHORT_SHA=${GITHUB_SHA::7}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          echo "Extracted version: $VERSION"
+          echo "Using short SHA for Docker tag: $SHORT_SHA"
+
       - name: Set up environment variables
         run: |
           echo "image_repository_name=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
@@ -35,7 +47,7 @@ jobs:
 
       # This step is for the deployment of the templates only, safe to delete
       - name: Modify csproj for template deploy
-        env: 
+        env:
           KAMAL_DEPLOY_IP: ${{ secrets.KAMAL_DEPLOY_IP }}
         if: env.KAMAL_DEPLOY_IP != null
         run: |
@@ -66,7 +78,7 @@ jobs:
 
       - name: Apply Production AppSettings
         env:
-          APPSETTINGS_PATCH: ${{ secrets.APPSETTINGS_PATCH }}      
+          APPSETTINGS_PATCH: ${{ secrets.APPSETTINGS_PATCH }}
         if: env.APPSETTINGS_PATCH != null
         working-directory: ./MembershipManager
         run: |
@@ -85,8 +97,24 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0'
+          dotnet-version: "8.0"
 
       - name: Build and push Docker image
         run: |
-          dotnet publish --os linux --arch x64 -c Release -p:ContainerRepository=${{ env.image_repository_name }} -p:ContainerRegistry=ghcr.io -p:ContainerImageTags=latest -p:ContainerPort=80
+          dotnet publish --os linux --arch x64 -c Release \
+            -p:ContainerRepository=${{ env.image_repository_name }} \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerImageTags=${{ env.SHORT_SHA }} \
+            -p:ContainerPort=80
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Azure App Service to use new image tag
+        run: |
+          az webapp config container set \
+            --name wa-mmbrshpmngr-02 \
+            --resource-group rg-mmbrshpmngr \
+            --docker-custom-image-name ghcr.io/${{ env.image_repository_name }}:${{ env.SHORT_SHA }}
