@@ -28,12 +28,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Extract version from commit SHA
+      - name: Extract version from Git tag
         id: extract_version
         run: |
-          VERSION=${GITHUB_SHA::7}
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.0")
+          VERSION=${VERSION#v}
+          SHORT_SHA=${GITHUB_SHA::7}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
           echo "Extracted version: $VERSION"
+          echo "Using short SHA for Docker tag: $SHORT_SHA"
 
       - name: Set up environment variables
         run: |
@@ -98,7 +102,11 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          dotnet publish --os linux --arch x64 -c Release -p:ContainerRepository=${{ env.image_repository_name }} -p:ContainerRegistry=ghcr.io -p:ContainerImageTags=${{ env.VERSION }} -p:ContainerPort=80
+          dotnet publish --os linux --arch x64 -c Release \
+            -p:ContainerRepository=${{ env.image_repository_name }} \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerImageTags=${{ env.SHORT_SHA }} \
+            -p:ContainerPort=80
 
       - name: Azure Login
         uses: azure/login@v1
@@ -110,4 +118,4 @@ jobs:
           az webapp config container set \
             --name wa-mmbrshpmngr-02 \
             --resource-group rg-mmbrshpmngr \
-            --docker-custom-image-name ghcr.io/${{ env.image_repository_name }}:${{ env.VERSION }}
+            --docker-custom-image-name ghcr.io/${{ env.image_repository_name }}:${{ env.SHORT_SHA }}
