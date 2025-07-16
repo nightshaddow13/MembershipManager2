@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-14 20:51:58
+Date: 2025-07-15 21:49:51
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -128,6 +128,46 @@ export class AuditBase
     public deletedBy: string;
 
     public constructor(init?: Partial<AuditBase>) { (Object as any).assign(this, init); }
+}
+
+export enum RoomType
+{
+    Single = 'Single',
+    Double = 'Double',
+    Queen = 'Queen',
+    Twin = 'Twin',
+    Suite = 'Suite',
+}
+
+/** @description Discount Coupons */
+export class Coupon
+{
+    public id: string;
+    public description: string;
+    public discount: number;
+    public expiryDate: string;
+
+    public constructor(init?: Partial<Coupon>) { (Object as any).assign(this, init); }
+}
+
+/** @description Booking Details */
+export class Booking extends AuditBase
+{
+    public id: number;
+    public name: string;
+    public roomType: RoomType;
+    public roomNumber: number;
+    public bookingStartDate: string;
+    public bookingEndDate?: string;
+    public cost: number;
+    // @References("typeof(MembershipManager.ServiceModel.Coupon)")
+    public couponId?: string;
+
+    public discount: Coupon;
+    public notes?: string;
+    public cancelled?: boolean;
+
+    public constructor(init?: Partial<Booking>) { super(init); (Object as any).assign(this, init); }
 }
 
 export enum UnitType
@@ -267,46 +307,6 @@ export class District extends AuditBase
     public units: Unit[] = [];
 
     public constructor(init?: Partial<District>) { super(init); (Object as any).assign(this, init); }
-}
-
-export enum RoomType
-{
-    Single = 'Single',
-    Double = 'Double',
-    Queen = 'Queen',
-    Twin = 'Twin',
-    Suite = 'Suite',
-}
-
-/** @description Discount Coupons */
-export class Coupon
-{
-    public id: string;
-    public description: string;
-    public discount: number;
-    public expiryDate: string;
-
-    public constructor(init?: Partial<Coupon>) { (Object as any).assign(this, init); }
-}
-
-/** @description Booking Details */
-export class Booking extends AuditBase
-{
-    public id: number;
-    public name: string;
-    public roomType: RoomType;
-    public roomNumber: number;
-    public bookingStartDate: string;
-    public bookingEndDate?: string;
-    public cost: number;
-    // @References("typeof(MembershipManager.ServiceModel.Coupon)")
-    public couponId?: string;
-
-    public discount: Coupon;
-    public notes?: string;
-    public cancelled?: boolean;
-
-    public constructor(init?: Partial<Booking>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class Council extends AuditBase
@@ -716,19 +716,17 @@ export class DeleteTodos implements IReturnVoid, IDelete
     public createResponse() {}
 }
 
-/** @description Find Units */
-// @Route("/units", "GET")
-// @Route("/units/{Id}", "GET")
+/** @description Search Units */
+// @Route("/units/search", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
+export class SearchUnits implements IReturn<Unit[]>
 {
-    public id?: number;
     public searchTerm?: string;
 
-    public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'QueryUnits'; }
+    public constructor(init?: Partial<SearchUnits>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'SearchUnits'; }
     public getMethod() { return 'GET'; }
-    public createResponse() { return new QueryResponse<Unit>(); }
+    public createResponse() { return new Array<Unit>(); }
 }
 
 /** @description Sign In */
@@ -898,6 +896,20 @@ export class QuerySchoolNote extends QueryDb<SchoolNote> implements IReturn<Quer
     public getTypeName() { return 'QuerySchoolNote'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<SchoolNote>(); }
+}
+
+/** @description Find Units */
+// @Route("/units", "GET")
+// @Route("/units/{Id}", "GET")
+// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
+export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
+{
+    public id?: number;
+
+    public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'QueryUnits'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new QueryResponse<Unit>(); }
 }
 
 /** @description Find Note & Unit Links */
