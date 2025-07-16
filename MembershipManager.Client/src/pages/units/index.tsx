@@ -1,6 +1,6 @@
 import Page from "@/components/LayoutPage";
 import React, { useState, useEffect, useCallback } from "react";
-import { QueryUnits, SearchUnits, Unit } from "@/dtos";
+import { SearchUnits, Unit } from "@/dtos";
 import { useNavigate } from "react-router-dom";
 import { useClient } from "@/gateway";
 
