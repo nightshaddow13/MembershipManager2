@@ -7,9 +7,9 @@ import { Trash2 } from "lucide-react";
 import { useClient } from "@/gateway";
 
 interface NotesListProps {
-	onCreate?: (note: CreateNote) => void;
-	onEdit?: (note: UpdateNote) => void;
-	onDelete?: (deletedNoteIds: number[]) => void;
+	onCreate?: (newNoteId: number) => void;
+	onEdit?: (editedNoteId: number) => void;
+	onDelete?: (deletedNoteId: number) => void;
 }
 
 const NotesList: React.FC<NotesListProps> = ({
@@ -54,8 +54,8 @@ const NotesList: React.FC<NotesListProps> = ({
 				description: draftDescription.trim(),
 			});
 			const api = await client.api(newNote);
-			if (api.succeeded) {
-				onCreate?.(newNote);
+			if (api.succeeded && api.response != null) {
+				onCreate?.(parseInt(api.response!.id));
 				refreshThings();
 			}
 		} else {
@@ -65,8 +65,8 @@ const NotesList: React.FC<NotesListProps> = ({
 				description: draftDescription.trim(),
 			});
 			const api = await client.api(updatedNote);
-			if (api.succeeded) {
-				onEdit?.(updatedNote);
+			if (api.succeeded && api.response != null) {
+				onEdit?.(parseInt(api.response!.id));
 				refreshThings();
 			}
 		}
@@ -86,7 +86,7 @@ const NotesList: React.FC<NotesListProps> = ({
 		// Call the onDelete with an array of deleted note IDs
 		// Here, only one ID is deleted, but this could be extended for batch deletes
 		if (api.succeeded) {
-			onDelete?.([id]);
+			onDelete?.(id);
 			refreshThings();
 		}
 

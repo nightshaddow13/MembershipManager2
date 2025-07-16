@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Event, QueryEvent } from "@/dtos";
+import { CreateEventNote, Event, Note, QueryEvent } from "@/dtos";
 import { useClient } from "@/gateway";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
@@ -21,6 +21,12 @@ const EventPage = () => {
 			const event = api.response!.results?.[0] ?? [];
 			setEvent(event);
 		}
+	};
+
+	const createNote = async (newNoteId: number) => {
+		await client.api(
+			new CreateEventNote({ noteId: newNoteId, eventId: eventId })
+		);
 	};
 
 	function formatDateTimeOffset(datetimeOffset: string) {
@@ -91,7 +97,7 @@ const EventPage = () => {
 					{/* Notes List Card */}
 					<div className="flex-1">
 						<NotesList
-							onCreate={() => 1}
+							onCreate={createNote}
 							onEdit={() => 1}
 							onDelete={() => 1}
 						/>
