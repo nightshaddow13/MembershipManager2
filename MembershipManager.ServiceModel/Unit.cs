@@ -59,7 +59,6 @@ public enum Sex
 public class QueryUnits : QueryDb<Unit>
 {
     public int? Id { get; set; }
-    public string? SearchTerm { get; set; }
 }
 
 [Tag("Units"), Description("Create a new Unit")]
@@ -104,6 +103,18 @@ public class UpdateUnit : IPatchDb<Unit>, IReturn<IdResponse>
 public class DeleteUnit : IDeleteDb<Unit>, IReturnVoid
 {
     public int Id { get; set; }
+}
+
+#endregion
+
+#region ServiceModels
+
+[Tag("Units"), Description("Search Units")]
+[Route("/units/search", "GET")]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
+public class SearchUnits : IGet, IReturn<List<Unit>>
+{
+    public string? SearchTerm { get; set; }
 }
 
 #endregion

@@ -1,6 +1,6 @@
 import Page from "@/components/LayoutPage";
 import React, { useState, useEffect, useCallback } from "react";
-import { QueryUnits, Unit } from "@/dtos";
+import { QueryUnits, SearchUnits, Unit } from "@/dtos";
 import { useNavigate } from "react-router-dom";
 import { useClient } from "@/gateway";
 
@@ -35,13 +35,13 @@ const UnitsPage: React.FC = () => {
 
 	const fetchUnits = useCallback(
 		async (search: string) => {
-			const query = new QueryUnits();
+			const query = new SearchUnits();
 			if (search) {
 				query.searchTerm = search;
 			}
 			const api = await client.api(query);
 			if (api.succeeded) {
-				setUnits(api.response?.results ?? []);
+				setUnits(api.response ?? []);
 			}
 		},
 		[client]
