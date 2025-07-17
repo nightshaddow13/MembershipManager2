@@ -26,6 +26,7 @@ const EventPage = () => {
 	const createNote = async (newNoteId: number) => {
 		await client.api(
 			new CreateEventNote({ noteId: newNoteId, eventId: eventId })
+			// todo: add success logic here to set note ids on success
 		);
 	};
 

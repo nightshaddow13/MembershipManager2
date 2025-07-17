@@ -26,7 +26,7 @@ const NotesList: React.FC<NotesListProps> = ({
 	const [draftDescription, setDraftDescription] = useState("");
 	useEffect(() => {
 		(async () => await refreshThings())();
-	}, []);
+	}, [noteIds]);
 
 	// Start editing a note or create new
 	const startEditing = (note?: Note) => {
@@ -59,8 +59,8 @@ const NotesList: React.FC<NotesListProps> = ({
 			});
 			const api = await client.api(newNote);
 			if (api.succeeded && api.response != null) {
-				onCreate?.(parseInt(api.response!.id));
-				refreshThings();
+				const createdNoteId = parseInt(api.response!.id);
+				onCreate?.(createdNoteId);
 			}
 		} else {
 			// Edit existing
@@ -71,7 +71,6 @@ const NotesList: React.FC<NotesListProps> = ({
 			const api = await client.api(updatedNote);
 			if (api.succeeded && api.response != null) {
 				onEdit?.(parseInt(api.response!.id));
-				refreshThings();
 			}
 		}
 		setEditingId(null);
