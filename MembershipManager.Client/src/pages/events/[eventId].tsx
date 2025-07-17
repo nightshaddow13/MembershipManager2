@@ -98,8 +98,7 @@ const EventPage = () => {
 					<div className="flex-1">
 						<NotesList
 							onCreate={createNote}
-							onEdit={() => 1}
-							onDelete={() => 1}
+							noteIds={event?.notesLink.map((note) => note.noteId) ?? []}
 						/>
 					</div>
 				</div>

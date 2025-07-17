@@ -10,12 +10,14 @@ interface NotesListProps {
 	onCreate?: (newNoteId: number) => void;
 	onEdit?: (editedNoteId: number) => void;
 	onDelete?: (deletedNoteId: number) => void;
+	noteIds: number[];
 }
 
 const NotesList: React.FC<NotesListProps> = ({
 	onCreate,
 	onEdit,
 	onDelete,
+	noteIds,
 }) => {
 	const client = useClient();
 
@@ -38,9 +40,11 @@ const NotesList: React.FC<NotesListProps> = ({
 	};
 
 	const refreshThings = async () => {
-		const api = await client.api(new QueryNotes());
-		if (api.succeeded) {
-			setNotes(api.response!.results ?? []);
+		if (noteIds.length > 0) {
+			const api = await client.api(new QueryNotes({ ids: noteIds }));
+			if (api.succeeded) {
+				setNotes(api.response!.results ?? []);
+			}
 		}
 	};
 

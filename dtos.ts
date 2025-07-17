@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-15 21:49:51
+Date: 2025-07-15 22:24:00
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -719,7 +719,7 @@ export class DeleteTodos implements IReturnVoid, IDelete
 /** @description Search Units */
 // @Route("/units/search", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class SearchUnits implements IReturn<Unit[]>
+export class SearchUnits implements IReturn<Unit[]>, IGet
 {
     public searchTerm?: string;
 
@@ -905,6 +905,7 @@ export class QuerySchoolNote extends QueryDb<SchoolNote> implements IReturn<Quer
 export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
 {
     public id?: number;
+    public ids?: number[];
 
     public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QueryUnits'; }
