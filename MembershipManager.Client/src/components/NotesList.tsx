@@ -62,6 +62,8 @@ const NotesList: React.FC<NotesListProps> = ({
 				const createdNoteId = parseInt(api.response!.id);
 				onCreate?.(createdNoteId);
 				refreshNotes();
+			} else {
+				console.error("Failed to create note");
 			}
 		} else {
 			// Edit existing
@@ -72,6 +74,9 @@ const NotesList: React.FC<NotesListProps> = ({
 			const api = await client.api(updatedNote);
 			if (api.succeeded && api.response != null) {
 				onEdit?.(parseInt(api.response!.id));
+				refreshNotes();
+			} else {
+				console.error("Failed to update note.");
 			}
 		}
 		setEditingId(null);
