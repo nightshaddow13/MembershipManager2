@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Event, QueryEvent } from "@/dtos";
+import { CreateEventNote, Event, Note, QueryEvent } from "@/dtos";
 import { useClient } from "@/gateway";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
@@ -9,6 +9,7 @@ import NotesList from "@/components/NotesList";
 const EventPage = () => {
 	const client = useClient();
 	const eventId = parseInt(useParams().eventId ?? "");
+	const [noteIds, setNoteIds] = useState<number[]>([]);
 
 	const [event, setEvent] = useState<Event>();
 	useEffect(() => {
@@ -20,6 +21,20 @@ const EventPage = () => {
 		if (api.succeeded) {
 			const event = api.response!.results?.[0] ?? [];
 			setEvent(event);
+			setNoteIds(event?.notesLink.map((note) => note.noteId) ?? []);
+		} else {
+			console.error("Failed to get event");
+		}
+	};
+
+	const createNote = async (newNoteId: number) => {
+		const api = await client.api(
+			new CreateEventNote({ noteId: newNoteId, eventId: eventId })
+		);
+		if (api.succeeded) {
+			setNoteIds(noteIds.concat(newNoteId));
+		} else {
+			console.error("Failed to link note to event");
 		}
 	};
 
@@ -91,9 +106,8 @@ const EventPage = () => {
 					{/* Notes List Card */}
 					<div className="flex-1">
 						<NotesList
-							onCreate={() => 1}
-							onEdit={() => 1}
-							onDelete={() => 1}
+							onCreate={createNote}
+							noteIds={noteIds}
 						/>
 					</div>
 				</div>
