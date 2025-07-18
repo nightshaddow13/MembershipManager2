@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CreateEventNote, Event, Note, QueryEvent } from "@/dtos";
+import { CreateEventNote, Event, QueryEvent } from "@/dtos";
 import { useClient } from "@/gateway";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
