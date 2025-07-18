@@ -7,15 +7,17 @@ import { Trash2 } from "lucide-react";
 import { useClient } from "@/gateway";
 
 interface NotesListProps {
-	onCreate?: (note: CreateNote) => void;
-	onEdit?: (note: UpdateNote) => void;
-	onDelete?: (deletedNoteIds: number[]) => void;
+	onCreate?: (newNoteId: number) => void;
+	onEdit?: (editedNoteId: number) => void;
+	onDelete?: (deletedNoteId: number) => void;
+	noteIds: number[];
 }
 
 const NotesList: React.FC<NotesListProps> = ({
 	onCreate,
 	onEdit,
 	onDelete,
+	noteIds,
 }) => {
 	const client = useClient();
 
@@ -23,8 +25,8 @@ const NotesList: React.FC<NotesListProps> = ({
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [draftDescription, setDraftDescription] = useState("");
 	useEffect(() => {
-		(async () => await refreshThings())();
-	}, []);
+		(async () => await refreshNotes())();
+	}, [noteIds]);
 
 	// Start editing a note or create new
 	const startEditing = (note?: Note) => {
@@ -37,10 +39,12 @@ const NotesList: React.FC<NotesListProps> = ({
 		}
 	};
 
-	const refreshThings = async () => {
-		const api = await client.api(new QueryNotes());
-		if (api.succeeded) {
-			setNotes(api.response!.results ?? []);
+	const refreshNotes = async () => {
+		if (noteIds.length > 0) {
+			const api = await client.api(new QueryNotes({ ids: noteIds }));
+			if (api.succeeded) {
+				setNotes(api.response!.results ?? []);
+			}
 		}
 	};
 
@@ -54,9 +58,12 @@ const NotesList: React.FC<NotesListProps> = ({
 				description: draftDescription.trim(),
 			});
 			const api = await client.api(newNote);
-			if (api.succeeded) {
-				onCreate?.(newNote);
-				refreshThings();
+			if (api.succeeded && api.response != null) {
+				const createdNoteId = parseInt(api.response!.id);
+				onCreate?.(createdNoteId);
+				refreshNotes();
+			} else {
+				console.error("Failed to create note");
 			}
 		} else {
 			// Edit existing
@@ -65,9 +72,11 @@ const NotesList: React.FC<NotesListProps> = ({
 				description: draftDescription.trim(),
 			});
 			const api = await client.api(updatedNote);
-			if (api.succeeded) {
-				onEdit?.(updatedNote);
-				refreshThings();
+			if (api.succeeded && api.response != null) {
+				onEdit?.(parseInt(api.response!.id));
+				refreshNotes();
+			} else {
+				console.error("Failed to update note.");
 			}
 		}
 		setEditingId(null);
@@ -86,8 +95,8 @@ const NotesList: React.FC<NotesListProps> = ({
 		// Call the onDelete with an array of deleted note IDs
 		// Here, only one ID is deleted, but this could be extended for batch deletes
 		if (api.succeeded) {
-			onDelete?.([id]);
-			refreshThings();
+			onDelete?.(id);
+			refreshNotes();
 		}
 
 		const updatedNotes = notes.filter((note) => note.id !== id);

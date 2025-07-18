@@ -37,6 +37,14 @@ export default () => {
 						<ul className="flex flex-wrap items-center justify-end w-full m-0">
 							<li className="relative flex flex-wrap just-fu-start m-0">
 								<NavLink
+									to="/"
+									className={navClass}
+								>
+									Event Management
+								</NavLink>
+							</li>
+							<li className="relative flex flex-wrap just-fu-start m-0">
+								<NavLink
 									to="/units"
 									className={navClass}
 								>
