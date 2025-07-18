@@ -9,6 +9,7 @@ import NotesList from "@/components/NotesList";
 const EventPage = () => {
 	const client = useClient();
 	const eventId = parseInt(useParams().eventId ?? "");
+	const [noteIds, setNoteIds] = useState<number[]>([]);
 
 	const [event, setEvent] = useState<Event>();
 	useEffect(() => {
@@ -20,14 +21,21 @@ const EventPage = () => {
 		if (api.succeeded) {
 			const event = api.response!.results?.[0] ?? [];
 			setEvent(event);
+			setNoteIds(event?.notesLink.map((note) => note.noteId) ?? []);
+		} else {
+			console.error("Failed to get event");
 		}
 	};
 
 	const createNote = async (newNoteId: number) => {
-		await client.api(
+		const api = await client.api(
 			new CreateEventNote({ noteId: newNoteId, eventId: eventId })
-			// todo: add success logic here to set note ids on success
 		);
+		if (api.succeeded) {
+			setNoteIds(noteIds.concat(newNoteId));
+		} else {
+			console.error("Failed to link note to event");
+		}
 	};
 
 	function formatDateTimeOffset(datetimeOffset: string) {
@@ -99,7 +107,7 @@ const EventPage = () => {
 					<div className="flex-1">
 						<NotesList
 							onCreate={createNote}
-							noteIds={event?.notesLink.map((note) => note.noteId) ?? []}
+							noteIds={noteIds}
 						/>
 					</div>
 				</div>

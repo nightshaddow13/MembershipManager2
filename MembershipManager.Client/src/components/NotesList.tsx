@@ -25,7 +25,7 @@ const NotesList: React.FC<NotesListProps> = ({
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [draftDescription, setDraftDescription] = useState("");
 	useEffect(() => {
-		(async () => await refreshThings())();
+		(async () => await refreshNotes())();
 	}, [noteIds]);
 
 	// Start editing a note or create new
@@ -39,7 +39,7 @@ const NotesList: React.FC<NotesListProps> = ({
 		}
 	};
 
-	const refreshThings = async () => {
+	const refreshNotes = async () => {
 		if (noteIds.length > 0) {
 			const api = await client.api(new QueryNotes({ ids: noteIds }));
 			if (api.succeeded) {
@@ -61,6 +61,7 @@ const NotesList: React.FC<NotesListProps> = ({
 			if (api.succeeded && api.response != null) {
 				const createdNoteId = parseInt(api.response!.id);
 				onCreate?.(createdNoteId);
+				refreshNotes();
 			}
 		} else {
 			// Edit existing
@@ -90,7 +91,7 @@ const NotesList: React.FC<NotesListProps> = ({
 		// Here, only one ID is deleted, but this could be extended for batch deletes
 		if (api.succeeded) {
 			onDelete?.(id);
-			refreshThings();
+			refreshNotes();
 		}
 
 		const updatedNotes = notes.filter((note) => note.id !== id);
