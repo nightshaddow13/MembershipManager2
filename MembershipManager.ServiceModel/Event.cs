@@ -85,8 +85,14 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
     public State State { get; set; }
     public string ZipCode { get; set; } = string.Empty;
 
-    public bool IsConfirmed { get; set; }
-    public bool AreFlyersOrdered { get; set; }
+    public bool IsConfirmedBySchool { get; set; }
+    public bool IsConfirmedByUnit { get; set; }
+    public bool NeedsHalfSheetFlyers { get; set; }
+    public bool AreHalfSheetFlyersOrdered { get; set; }
+    public bool AreHalfSheetFlyersDelivered { get; set; }
+    public bool NeedsFullSheetFlyers { get; set; }
+    public bool AreFullSheetFlyersOrdered { get; set; }
+    public bool AreFullSheetFlyersDelivered { get; set; }
     public bool RequiresFacilitron { get; set; }
     public bool IsFacilitronConfirmed { get; set; }
 }
@@ -96,6 +102,8 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
 [AutoApply(Behavior.AuditModify)]
 public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
 {
+    public int Id { get; set; }
+
     [ApiAllowableValues(typeof(EventType))]
     public EventType EventType { get; set; }
     public string Description { get; set; } = string.Empty;
@@ -105,8 +113,14 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
     public string City { get; set; } = string.Empty;
     public string ZipCode { get; set; } = string.Empty;
 
-    public bool IsConfirmed { get; set; }
-    public bool AreFlyersOrdered { get; set; }
+    public bool IsConfirmedBySchool { get; set; }
+    public bool IsConfirmedByUnit { get; set; }
+    public bool NeedsHalfSheetFlyers { get; set; }
+    public bool AreHalfSheetFlyersOrdered { get; set; }
+    public bool AreHalfSheetFlyersDelivered { get; set; }
+    public bool NeedsFullSheetFlyers { get; set; }
+    public bool AreFullSheetFlyersOrdered { get; set; }
+    public bool AreFullSheetFlyersDelivered { get; set; }
     public bool RequiresFacilitron { get; set; }
     public bool IsFacilitronConfirmed { get; set; }
 }

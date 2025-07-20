@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-20 15:51:52
+Date: 2025-07-20 16:20:16
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -1154,8 +1154,14 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
     public city: string;
     public state: State;
     public zipCode: string;
-    public isConfirmed: boolean;
-    public areFlyersOrdered: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needsHalfSheetFlyers: boolean;
+    public areHalfSheetFlyersOrdered: boolean;
+    public areHalfSheetFlyersDelivered: boolean;
+    public needsFullSheetFlyers: boolean;
+    public areFullSheetFlyersOrdered: boolean;
+    public areFullSheetFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
 
@@ -1169,14 +1175,21 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class UpdateEvent implements IReturn<IdResponse>, IPatchDb<Event>
 {
+    public id: number;
     public eventType: EventType;
     public description: string;
     public dateTime: string;
     public address: string;
     public city: string;
     public zipCode: string;
-    public isConfirmed: boolean;
-    public areFlyersOrdered: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needsHalfSheetFlyers: boolean;
+    public areHalfSheetFlyersOrdered: boolean;
+    public areHalfSheetFlyersDelivered: boolean;
+    public needsFullSheetFlyers: boolean;
+    public areFullSheetFlyersOrdered: boolean;
+    public areFullSheetFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
 

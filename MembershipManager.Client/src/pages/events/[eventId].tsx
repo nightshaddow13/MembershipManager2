@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CreateEventNote, Event, QueryEvent } from "@/dtos";
+import { CreateEventNote, Event, QueryEvent, UpdateEvent } from "@/dtos";
 import { useClient } from "@/gateway";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
@@ -23,7 +23,10 @@ const EventPage = () => {
 	const client = useClient();
 	const eventId = parseInt(useParams().eventId ?? "");
 	const [noteIds, setNoteIds] = useState<number[]>([]);
-	const [event, setEvent] = useState<Event>();
+	const [event, setEvent] = useState<Event | undefined>();
+	const [checklistState, setChecklistState] = useState<Record<string, boolean>>(
+		{}
+	);
 
 	useEffect(() => {
 		(async () => await queryEvent())();
@@ -35,8 +38,41 @@ const EventPage = () => {
 			const event = api.response!.results?.[0] ?? [];
 			setEvent(event);
 			setNoteIds(event?.notesLink.map((note) => note.noteId) ?? []);
+
+			// Initialize checklist state from event properties
+			const initialChecklist: Record<string, boolean> = {};
+			checklistProperties.forEach(({ key }) => {
+				initialChecklist[key] = Boolean(event[key as keyof Event]);
+			});
+			setChecklistState(initialChecklist);
 		} else {
 			console.error("Failed to get event");
+		}
+	};
+
+	const updateEvent = async (event: Event) => {
+		const api = await client.api(
+			new UpdateEvent({
+				// Copy basic event properties (adjust as needed)
+				id: event.id,
+				eventType: event.eventType,
+				description: event.description,
+				dateTime: event.dateTime,
+				address: event.address,
+				city: event.city,
+				zipCode: event.zipCode,
+
+				// Spread checklist properties from checklistState
+				...checklistProperties.reduce((acc, { key }) => {
+					acc[key] = checklistState[key];
+					return acc;
+				}, {} as Record<string, boolean>),
+			})
+		);
+		if (api.succeeded) {
+			console.info("Event updated succesfully");
+		} else {
+			console.error("Failed to update event");
 		}
 	};
 
@@ -49,6 +85,22 @@ const EventPage = () => {
 		} else {
 			console.error("Failed to link note to event");
 		}
+	};
+
+	// Handler for toggling checklist items
+	const toggleChecklistItem = (key: string) => {
+		setChecklistState((prev) => {
+			const newState = { ...prev, [key]: !prev[key] };
+
+			setEvent((ev) => {
+				if (!ev) return ev;
+				const updatedEvent = { ...ev, [key]: newState[key] };
+				updateEvent(updatedEvent); // call with updated event here
+				return updatedEvent;
+			});
+
+			return newState;
+		});
 	};
 
 	function formatDateTimeOffset(datetimeOffset: string) {
@@ -87,7 +139,7 @@ const EventPage = () => {
 
 				{/* Container for side-by-side cards with notes spanning vertically */}
 				<div className="flex flex-col md:flex-row md:space-x-6 mx-auto max-w-6xl w-full px-4">
-					{/* Left side: checklist and event info stacked vertically */}
+					{/* Left side: event info and checklist stacked vertically */}
 					<div className="flex flex-col md:flex-col md:w-1/3 space-y-6">
 						{/* Event Info Card */}
 						<Card className="bg-white dark:bg-gray-800 p-6">
@@ -129,8 +181,8 @@ const EventPage = () => {
 									>
 										<input
 											type="checkbox"
-											checked={Boolean(event?.[key as keyof Event])}
-											readOnly
+											checked={!!checklistState[key]}
+											onChange={() => toggleChecklistItem(key)}
 											className="form-checkbox rounded text-blue-600"
 										/>
 										<span>{label}</span>
