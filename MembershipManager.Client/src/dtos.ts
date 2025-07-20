@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-16 21:41:08
+Date: 2025-07-20 15:51:52
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -345,8 +345,14 @@ export class Event extends AuditBase
     public city: string;
     public state: State;
     public zipCode: string;
-    public isConfirmed: boolean;
-    public areFlyersOrdered: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needsHalfSheetFlyers: boolean;
+    public areHalfSheetFlyersOrdered: boolean;
+    public areHalfSheetFlyersDelivered: boolean;
+    public needsFullSheetFlyers: boolean;
+    public areFullSheetFlyersOrdered: boolean;
+    public areFullSheetFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
     public schoolsLink: EventSchool[] = [];

@@ -6,12 +6,25 @@ import { useClient } from "@/gateway";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
 
+const checklistProperties = [
+	{ key: "isConfirmedBySchool", label: "Confirmed By School" },
+	{ key: "isConfirmedByUnit", label: "Confirmed By Unit" },
+	{ key: "needsHalfSheetFlyers", label: "Needs Half Sheet Flyers" },
+	{ key: "areHalfSheetFlyersOrdered", label: "Half Sheet Flyers Ordered" },
+	{ key: "areHalfSheetFlyersDelivered", label: "Half Sheet Flyers Delivered" },
+	{ key: "needsFullSheetFlyers", label: "Needs Full Sheet Flyers" },
+	{ key: "areFullSheetFlyersOrdered", label: "Full Sheet Flyers Ordered" },
+	{ key: "areFullSheetFlyersDelivered", label: "Full Sheet Flyers Delivered" },
+	{ key: "requiresFacilitron", label: "Requires Facilitron" },
+	{ key: "isFacilitronConfirmed", label: "Facilitron Confirmed" },
+];
+
 const EventPage = () => {
 	const client = useClient();
 	const eventId = parseInt(useParams().eventId ?? "");
 	const [noteIds, setNoteIds] = useState<number[]>([]);
-
 	const [event, setEvent] = useState<Event>();
+
 	useEffect(() => {
 		(async () => await queryEvent())();
 	}, []);
@@ -41,17 +54,14 @@ const EventPage = () => {
 	function formatDateTimeOffset(datetimeOffset: string) {
 		if (!datetimeOffset) return { date: "TBD", time: "TBD" };
 
-		// Parse the DateTimeOffset string into a Date object
 		const dateObj = new Date(datetimeOffset);
 
-		// Extract date string in a readable format
 		const date = dateObj.toLocaleDateString(undefined, {
 			year: "numeric",
 			month: "long",
 			day: "numeric",
 		});
 
-		// Extract time string in HH:mm format
 		const time = dateObj.toLocaleTimeString(undefined, {
 			hour: "2-digit",
 			minute: "2-digit",
@@ -75,41 +85,68 @@ const EventPage = () => {
 					{event?.description} {splitPascalCase(event?.eventType ?? "")}
 				</h1>
 
-				{/* Container for side-by-side cards */}
+				{/* Container for side-by-side cards with notes spanning vertically */}
 				<div className="flex flex-col md:flex-row md:space-x-6 mx-auto max-w-6xl w-full px-4">
-					{/* Event Info Card */}
-					<Card className="flex-1 p-6 bg-white dark:bg-gray-800 mb-6 md:mb-0">
-						<div className="flex space-x-8 text-lg justify-center">
-							<div className="flex flex-col items-center">
-								<span className="font-semibold">Date:</span>
-								<span>
-									{formatDateTimeOffset(event?.dateTime ?? "").date || "TBD"}
-								</span>
+					{/* Left side: checklist and event info stacked vertically */}
+					<div className="flex flex-col md:flex-col md:w-1/3 space-y-6">
+						{/* Event Info Card */}
+						<Card className="bg-white dark:bg-gray-800 p-6">
+							<div className="flex space-x-8 text-lg justify-center">
+								<div className="flex flex-col items-center">
+									<span className="font-semibold">Date:</span>
+									<span>
+										{formatDateTimeOffset(event?.dateTime ?? "").date || "TBD"}
+									</span>
+								</div>
+								<div className="flex flex-col items-center">
+									<span className="font-semibold">Time:</span>
+									<span>
+										{formatDateTimeOffset(event?.dateTime ?? "").time || "TBD"}
+									</span>
+								</div>
 							</div>
-							<div className="flex flex-col items-center">
-								<span className="font-semibold">Time:</span>
-								<span>
-									{formatDateTimeOffset(event?.dateTime ?? "").time || "TBD"}
-								</span>
+
+							{/* Address Section */}
+							<div className="text-center text-lg mt-4">
+								<span className="font-semibold">Address:</span>
+								<p>
+									{event?.address}, {event?.city}, {event?.state}{" "}
+									{event?.zipCode}
+								</p>
 							</div>
-						</div>
+						</Card>
 
-						{/* Address Section */}
-						<div className="text-center text-lg mt-4">
-							<span className="font-semibold">Address:</span>
-							<p>
-								{event?.address}, {event?.city}, {event?.state} {event?.zipCode}
-							</p>
-						</div>
-					</Card>
+						{/* Checklist Card */}
+						<Card className="bg-white dark:bg-gray-800 p-6">
+							<h2 className="text-xl font-semibold mb-4 text-center">
+								Checklist
+							</h2>
+							<div className="flex flex-col space-y-3">
+								{checklistProperties.map(({ key, label }) => (
+									<label
+										key={key}
+										className="inline-flex items-center space-x-2 cursor-pointer select-none"
+									>
+										<input
+											type="checkbox"
+											checked={Boolean(event?.[key as keyof Event])}
+											readOnly
+											className="form-checkbox rounded text-blue-600"
+										/>
+										<span>{label}</span>
+									</label>
+								))}
+							</div>
+						</Card>
+					</div>
 
-					{/* Notes List Card */}
-					<div className="flex-1">
+					{/* Notes List Card spanning full height of left column */}
+					<Card className="md:w-2/3 p-6 bg-white dark:bg-gray-800">
 						<NotesList
 							onCreate={createNote}
 							noteIds={noteIds}
 						/>
-					</div>
+					</Card>
 				</div>
 			</div>
 		</Layout>
