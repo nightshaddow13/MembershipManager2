@@ -18,32 +18,13 @@ public class Migration1002_RefineEventChecklist : MigrationBase
         [Default(0)]
         public bool IsConfirmedByUnit { get; set; } = false;
 
-        [RemoveColumn]
-        public bool AreFlyersOrdered { get; set; }
+        [AddColumn]
+        [Default(0)]
+        public bool NeedFlyers { get; set; } = false;
 
         [AddColumn]
         [Default(0)]
-        public bool NeedsHalfSheetFlyers { get; set; } = false;
-
-        [AddColumn]
-        [Default(0)]
-        public bool AreHalfSheetFlyersOrdered { get; set; } = false;
-
-        [AddColumn]
-        [Default(0)]
-        public bool AreHalfSheetFlyersDelivered { get; set; } = false;
-
-        [AddColumn]
-        [Default(0)]
-        public bool NeedsFullSheetFlyers { get; set; } = false;
-
-        [AddColumn]
-        [Default(0)]
-        public bool AreFullSheetFlyersOrdered { get; set; } = false;
-
-        [AddColumn]
-        [Default(0)]
-        public bool AreFullSheetFlyersDelivered { get; set; } = false;
+        public bool AreFlyersDelivered { get; set; } = false;
     }
 
     public override void Up()

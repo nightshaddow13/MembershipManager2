@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-20 16:20:16
+Date: 2025-07-22 21:06:30
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -347,12 +347,9 @@ export class Event extends AuditBase
     public zipCode: string;
     public isConfirmedBySchool: boolean;
     public isConfirmedByUnit: boolean;
-    public needsHalfSheetFlyers: boolean;
-    public areHalfSheetFlyersOrdered: boolean;
-    public areHalfSheetFlyersDelivered: boolean;
-    public needsFullSheetFlyers: boolean;
-    public areFullSheetFlyersOrdered: boolean;
-    public areFullSheetFlyersDelivered: boolean;
+    public needFlyers: boolean;
+    public areFlyersOrdered: boolean;
+    public areFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
     public schoolsLink: EventSchool[] = [];
@@ -1156,12 +1153,9 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
     public zipCode: string;
     public isConfirmedBySchool: boolean;
     public isConfirmedByUnit: boolean;
-    public needsHalfSheetFlyers: boolean;
-    public areHalfSheetFlyersOrdered: boolean;
-    public areHalfSheetFlyersDelivered: boolean;
-    public needsFullSheetFlyers: boolean;
-    public areFullSheetFlyersOrdered: boolean;
-    public areFullSheetFlyersDelivered: boolean;
+    public needFlyers: boolean;
+    public areFlyersOrdered: boolean;
+    public areFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
 
@@ -1182,16 +1176,13 @@ export class UpdateEvent implements IReturn<IdResponse>, IPatchDb<Event>
     public address: string;
     public city: string;
     public zipCode: string;
-    public isConfirmedBySchool: boolean;
-    public isConfirmedByUnit: boolean;
-    public needsHalfSheetFlyers: boolean;
-    public areHalfSheetFlyersOrdered: boolean;
-    public areHalfSheetFlyersDelivered: boolean;
-    public needsFullSheetFlyers: boolean;
-    public areFullSheetFlyersOrdered: boolean;
-    public areFullSheetFlyersDelivered: boolean;
-    public requiresFacilitron: boolean;
-    public isFacilitronConfirmed: boolean;
+    public isConfirmedBySchool?: boolean;
+    public isConfirmedByUnit?: boolean;
+    public needFlyers?: boolean;
+    public areFlyersOrdered?: boolean;
+    public areFlyersDelivered?: boolean;
+    public requiresFacilitron?: boolean;
+    public isFacilitronConfirmed?: boolean;
 
     public constructor(init?: Partial<UpdateEvent>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateEvent'; }

@@ -26,12 +26,9 @@ public class Event : AuditBase
     // Checklist
     public bool IsConfirmedBySchool { get; set; }
     public bool IsConfirmedByUnit { get; set; }
-    public bool NeedsHalfSheetFlyers { get; set; }
-    public bool AreHalfSheetFlyersOrdered { get; set; }
-    public bool AreHalfSheetFlyersDelivered { get; set; }
-    public bool NeedsFullSheetFlyers { get; set; }
-    public bool AreFullSheetFlyersOrdered { get; set; }
-    public bool AreFullSheetFlyersDelivered { get; set; }
+    public bool NeedFlyers { get; set; }
+    public bool AreFlyersOrdered { get; set; }
+    public bool AreFlyersDelivered { get; set; }
     public bool RequiresFacilitron { get; set; }
     public bool IsFacilitronConfirmed { get; set; }
 
@@ -87,12 +84,9 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
 
     public bool IsConfirmedBySchool { get; set; }
     public bool IsConfirmedByUnit { get; set; }
-    public bool NeedsHalfSheetFlyers { get; set; }
-    public bool AreHalfSheetFlyersOrdered { get; set; }
-    public bool AreHalfSheetFlyersDelivered { get; set; }
-    public bool NeedsFullSheetFlyers { get; set; }
-    public bool AreFullSheetFlyersOrdered { get; set; }
-    public bool AreFullSheetFlyersDelivered { get; set; }
+    public bool NeedFlyers { get; set; }
+    public bool AreFlyersOrdered { get; set; }
+    public bool AreFlyersDelivered { get; set; }
     public bool RequiresFacilitron { get; set; }
     public bool IsFacilitronConfirmed { get; set; }
 }
@@ -113,16 +107,13 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
     public string City { get; set; } = string.Empty;
     public string ZipCode { get; set; } = string.Empty;
 
-    public bool IsConfirmedBySchool { get; set; }
-    public bool IsConfirmedByUnit { get; set; }
-    public bool NeedsHalfSheetFlyers { get; set; }
-    public bool AreHalfSheetFlyersOrdered { get; set; }
-    public bool AreHalfSheetFlyersDelivered { get; set; }
-    public bool NeedsFullSheetFlyers { get; set; }
-    public bool AreFullSheetFlyersOrdered { get; set; }
-    public bool AreFullSheetFlyersDelivered { get; set; }
-    public bool RequiresFacilitron { get; set; }
-    public bool IsFacilitronConfirmed { get; set; }
+    public bool? IsConfirmedBySchool { get; set; }
+    public bool? IsConfirmedByUnit { get; set; }
+    public bool? NeedFlyers { get; set; }
+    public bool? AreFlyersOrdered { get; set; }
+    public bool? AreFlyersDelivered { get; set; }
+    public bool? RequiresFacilitron { get; set; }
+    public bool? IsFacilitronConfirmed { get; set; }
 }
 
 [ValidateHasRole(Roles.MembershipChair)]

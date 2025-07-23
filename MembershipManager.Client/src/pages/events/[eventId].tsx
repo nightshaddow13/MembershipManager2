@@ -9,12 +9,9 @@ import NotesList from "@/components/NotesList";
 const checklistProperties = [
 	{ key: "isConfirmedBySchool", label: "Confirmed By School" },
 	{ key: "isConfirmedByUnit", label: "Confirmed By Unit" },
-	{ key: "needsHalfSheetFlyers", label: "Needs Half Sheet Flyers" },
-	{ key: "areHalfSheetFlyersOrdered", label: "Half Sheet Flyers Ordered" },
-	{ key: "areHalfSheetFlyersDelivered", label: "Half Sheet Flyers Delivered" },
-	{ key: "needsFullSheetFlyers", label: "Needs Full Sheet Flyers" },
-	{ key: "areFullSheetFlyersOrdered", label: "Full Sheet Flyers Ordered" },
-	{ key: "areFullSheetFlyersDelivered", label: "Full Sheet Flyers Delivered" },
+	{ key: "needFlyers", label: "Need Flyers" },
+	{ key: "areFlyersOrdered", label: "Flyers Ordered" },
+	{ key: "areFlyersDelivered", label: "Flyers Delivered" },
 	{ key: "requiresFacilitron", label: "Requires Facilitron" },
 	{ key: "isFacilitronConfirmed", label: "Facilitron Confirmed" },
 ];
@@ -53,7 +50,6 @@ const EventPage = () => {
 	const updateEvent = async (event: Event) => {
 		const api = await client.api(
 			new UpdateEvent({
-				// Copy basic event properties (adjust as needed)
 				id: event.id,
 				eventType: event.eventType,
 				description: event.description,
@@ -70,7 +66,7 @@ const EventPage = () => {
 			})
 		);
 		if (api.succeeded) {
-			console.info("Event updated succesfully");
+			console.info("Event updated successfully");
 		} else {
 			console.error("Failed to update event");
 		}
@@ -91,17 +87,29 @@ const EventPage = () => {
 	const toggleChecklistItem = (key: string) => {
 		setChecklistState((prev) => {
 			const newState = { ...prev, [key]: !prev[key] };
-
-			setEvent((ev) => {
-				if (!ev) return ev;
-				const updatedEvent = { ...ev, [key]: newState[key] };
-				updateEvent(updatedEvent); // call with updated event here
-				return updatedEvent;
-			});
-
 			return newState;
 		});
+
+		setEvent((ev) => {
+			if (!ev) return ev;
+			return { ...ev, [key]: !ev[key as keyof Event] };
+		});
 	};
+
+	// useEffect to update event whenever checklistState changes
+	useEffect(() => {
+		if (!event) return;
+
+		const updatedEvent = {
+			...event,
+			...checklistProperties.reduce((acc, { key }) => {
+				acc[key] = checklistState[key];
+				return acc;
+			}, {} as Record<string, boolean>),
+		};
+
+		updateEvent(updatedEvent);
+	}, [checklistState]);
 
 	function formatDateTimeOffset(datetimeOffset: string) {
 		if (!datetimeOffset) return { date: "TBD", time: "TBD" };
