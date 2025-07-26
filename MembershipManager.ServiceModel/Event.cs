@@ -12,20 +12,27 @@ public class Event : AuditBase
     [AutoIncrement]
     public int Id { get; set; }
 
+    // Event information
     public EventType EventType { get; set; }
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
 
+    // Address
     public string Address { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public State State { get; set; }
     public string ZipCode { get; set; } = string.Empty;
 
-    public bool IsConfirmed { get; set; }
+    // Checklist
+    public bool IsConfirmedBySchool { get; set; }
+    public bool IsConfirmedByUnit { get; set; }
+    public bool NeedFlyers { get; set; }
     public bool AreFlyersOrdered { get; set; }
+    public bool AreFlyersDelivered { get; set; }
     public bool RequiresFacilitron { get; set; }
     public bool IsFacilitronConfirmed { get; set; }
 
+    // References
     [Reference]
     public List<EventSchool> SchoolsLink { get; set; } = [];
 
@@ -75,8 +82,11 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
     public State State { get; set; }
     public string ZipCode { get; set; } = string.Empty;
 
-    public bool IsConfirmed { get; set; }
+    public bool IsConfirmedBySchool { get; set; }
+    public bool IsConfirmedByUnit { get; set; }
+    public bool NeedFlyers { get; set; }
     public bool AreFlyersOrdered { get; set; }
+    public bool AreFlyersDelivered { get; set; }
     public bool RequiresFacilitron { get; set; }
     public bool IsFacilitronConfirmed { get; set; }
 }
@@ -86,6 +96,8 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
 [AutoApply(Behavior.AuditModify)]
 public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
 {
+    public int Id { get; set; }
+
     [ApiAllowableValues(typeof(EventType))]
     public EventType EventType { get; set; }
     public string Description { get; set; } = string.Empty;
@@ -95,10 +107,13 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
     public string City { get; set; } = string.Empty;
     public string ZipCode { get; set; } = string.Empty;
 
-    public bool IsConfirmed { get; set; }
-    public bool AreFlyersOrdered { get; set; }
-    public bool RequiresFacilitron { get; set; }
-    public bool IsFacilitronConfirmed { get; set; }
+    public bool? IsConfirmedBySchool { get; set; }
+    public bool? IsConfirmedByUnit { get; set; }
+    public bool? NeedFlyers { get; set; }
+    public bool? AreFlyersOrdered { get; set; }
+    public bool? AreFlyersDelivered { get; set; }
+    public bool? RequiresFacilitron { get; set; }
+    public bool? IsFacilitronConfirmed { get; set; }
 }
 
 [ValidateHasRole(Roles.MembershipChair)]

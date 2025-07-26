@@ -111,7 +111,7 @@ const NotesList: React.FC<NotesListProps> = ({
 	// and call onDelete with an array of note IDs.
 
 	return (
-		<Card className="max-w-3xl mx-auto p-6 space-y-6 bg-white dark:bg-gray-800">
+		<>
 			<div className="flex justify-between items-center">
 				<h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
 					Notes
@@ -189,7 +189,7 @@ const NotesList: React.FC<NotesListProps> = ({
 					))}
 				</ul>
 			)}
-		</Card>
+		</>
 	);
 };
 

@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-16 21:41:08
+Date: 2025-07-22 21:06:30
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -345,8 +345,11 @@ export class Event extends AuditBase
     public city: string;
     public state: State;
     public zipCode: string;
-    public isConfirmed: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needFlyers: boolean;
     public areFlyersOrdered: boolean;
+    public areFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
     public schoolsLink: EventSchool[] = [];
@@ -1148,8 +1151,11 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
     public city: string;
     public state: State;
     public zipCode: string;
-    public isConfirmed: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needFlyers: boolean;
     public areFlyersOrdered: boolean;
+    public areFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
 
@@ -1163,16 +1169,20 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class UpdateEvent implements IReturn<IdResponse>, IPatchDb<Event>
 {
+    public id: number;
     public eventType: EventType;
     public description: string;
     public dateTime: string;
     public address: string;
     public city: string;
     public zipCode: string;
-    public isConfirmed: boolean;
-    public areFlyersOrdered: boolean;
-    public requiresFacilitron: boolean;
-    public isFacilitronConfirmed: boolean;
+    public isConfirmedBySchool?: boolean;
+    public isConfirmedByUnit?: boolean;
+    public needFlyers?: boolean;
+    public areFlyersOrdered?: boolean;
+    public areFlyersDelivered?: boolean;
+    public requiresFacilitron?: boolean;
+    public isFacilitronConfirmed?: boolean;
 
     public constructor(init?: Partial<UpdateEvent>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateEvent'; }
