@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-22 21:06:30
+Date: 2025-07-29 21:03:55
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -63,6 +63,11 @@ export interface IPatchDb<Table>
 
 export interface IDeleteDb<Table>
 {
+}
+
+export interface ISearch
+{
+    searchTerm?: string;
 }
 
 // @DataContract
@@ -657,6 +662,19 @@ export class ConfirmEmail implements IReturnVoid, IGet
     public createResponse() {}
 }
 
+/** @description Search Schools */
+// @Route("/schools/search", "GET")
+// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
+export class SearchSchools implements IReturn<School[]>, IGet, ISearch
+{
+    public searchTerm?: string;
+
+    public constructor(init?: Partial<SearchSchools>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'SearchSchools'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new Array<School>(); }
+}
+
 // @Route("/todos", "GET")
 export class QueryTodos extends QueryData<Todo> implements IReturn<QueryResponse<Todo>>
 {
@@ -722,7 +740,7 @@ export class DeleteTodos implements IReturnVoid, IDelete
 /** @description Search Units */
 // @Route("/units/search", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class SearchUnits implements IReturn<Unit[]>, IGet
+export class SearchUnits implements IReturn<Unit[]>, IGet, ISearch
 {
     public searchTerm?: string;
 

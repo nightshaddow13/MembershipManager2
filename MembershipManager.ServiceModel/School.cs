@@ -1,4 +1,5 @@
 ﻿using MembershipManager.ServiceModel.Enum;
+using MembershipManager.ServiceModel.Interfaces;
 using ServiceStack;
 using ServiceStack.DataAnnotations;
 using System.Security.Cryptography.X509Certificates;
@@ -104,6 +105,18 @@ public class UpdateSchool : IPatchDb<School>, IReturn<IdResponse>
 public class DeleteSchool : IDeleteDb<School>, IReturnVoid
 {
     public int Id { get; set; }
+}
+
+#endregion
+
+#region ServiceModels
+
+[Tag("Schools"), Description("Search Schools")]
+[Route("/schools/search", "GET")]
+[ValidateHasRole(Roles.NewMemberCoordinator)]
+public class SearchSchools : IGet, IReturn<List<School>>, ISearch
+{
+    public string? SearchTerm { get; set; }
 }
 
 #endregion

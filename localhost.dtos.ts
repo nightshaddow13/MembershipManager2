@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-15 22:24:00
+Date: 2025-07-29 21:03:55
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -63,6 +63,11 @@ export interface IPatchDb<Table>
 
 export interface IDeleteDb<Table>
 {
+}
+
+export interface ISearch
+{
+    searchTerm?: string;
 }
 
 // @DataContract
@@ -345,8 +350,11 @@ export class Event extends AuditBase
     public city: string;
     public state: State;
     public zipCode: string;
-    public isConfirmed: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needFlyers: boolean;
     public areFlyersOrdered: boolean;
+    public areFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
     public schoolsLink: EventSchool[] = [];
@@ -654,6 +662,19 @@ export class ConfirmEmail implements IReturnVoid, IGet
     public createResponse() {}
 }
 
+/** @description Search Schools */
+// @Route("/schools/search", "GET")
+// @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
+export class SearchSchools implements IReturn<School[]>, IGet, ISearch
+{
+    public searchTerm?: string;
+
+    public constructor(init?: Partial<SearchSchools>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'SearchSchools'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new Array<School>(); }
+}
+
 // @Route("/todos", "GET")
 export class QueryTodos extends QueryData<Todo> implements IReturn<QueryResponse<Todo>>
 {
@@ -719,7 +740,7 @@ export class DeleteTodos implements IReturnVoid, IDelete
 /** @description Search Units */
 // @Route("/units/search", "GET")
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
-export class SearchUnits implements IReturn<Unit[]>, IGet
+export class SearchUnits implements IReturn<Unit[]>, IGet, ISearch
 {
     public searchTerm?: string;
 
@@ -868,7 +889,7 @@ export class QueryEventUnit extends QueryDb<EventUnit> implements IReturn<QueryR
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
 export class QueryNotes extends QueryDb<Note> implements IReturn<QueryResponse<Note>>
 {
-    public ids: number[];
+    public ids?: number[];
 
     public constructor(init?: Partial<QueryNotes>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QueryNotes'; }
@@ -905,7 +926,6 @@ export class QuerySchoolNote extends QueryDb<SchoolNote> implements IReturn<Quer
 export class QueryUnits extends QueryDb<Unit> implements IReturn<QueryResponse<Unit>>
 {
     public id?: number;
-    public ids?: number[];
 
     public constructor(init?: Partial<QueryUnits>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QueryUnits'; }
@@ -1149,8 +1169,11 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
     public city: string;
     public state: State;
     public zipCode: string;
-    public isConfirmed: boolean;
+    public isConfirmedBySchool: boolean;
+    public isConfirmedByUnit: boolean;
+    public needFlyers: boolean;
     public areFlyersOrdered: boolean;
+    public areFlyersDelivered: boolean;
     public requiresFacilitron: boolean;
     public isFacilitronConfirmed: boolean;
 
@@ -1164,16 +1187,20 @@ export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class UpdateEvent implements IReturn<IdResponse>, IPatchDb<Event>
 {
+    public id: number;
     public eventType: EventType;
     public description: string;
     public dateTime: string;
     public address: string;
     public city: string;
     public zipCode: string;
-    public isConfirmed: boolean;
-    public areFlyersOrdered: boolean;
-    public requiresFacilitron: boolean;
-    public isFacilitronConfirmed: boolean;
+    public isConfirmedBySchool?: boolean;
+    public isConfirmedByUnit?: boolean;
+    public needFlyers?: boolean;
+    public areFlyersOrdered?: boolean;
+    public areFlyersDelivered?: boolean;
+    public requiresFacilitron?: boolean;
+    public isFacilitronConfirmed?: boolean;
 
     public constructor(init?: Partial<UpdateEvent>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateEvent'; }

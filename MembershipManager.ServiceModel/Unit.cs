@@ -1,4 +1,5 @@
-﻿using ServiceStack;
+﻿using MembershipManager.ServiceModel.Interfaces;
+using ServiceStack;
 using ServiceStack.DataAnnotations;
 
 namespace MembershipManager.ServiceModel;
@@ -112,7 +113,7 @@ public class DeleteUnit : IDeleteDb<Unit>, IReturnVoid
 [Tag("Units"), Description("Search Units")]
 [Route("/units/search", "GET")]
 [ValidateHasRole(Roles.NewMemberCoordinator)]
-public class SearchUnits : IGet, IReturn<List<Unit>>
+public class SearchUnits : IGet, IReturn<List<Unit>>, ISearch
 {
     public string? SearchTerm { get; set; }
 }
