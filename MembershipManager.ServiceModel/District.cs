@@ -36,6 +36,7 @@ public class QueryDistrict : QueryDb<District> { }
 public class CreateDistrict : ICreateDb<District>, IReturn<IdResponse>
 {
     [ValidateMaximumLength(25)]
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 
     public int CouncilId { get; set; }
@@ -49,6 +50,7 @@ public class UpdateDistrict : IPatchDb<District>, IReturn<IdResponse>
     public int Id { get; set; }
 
     [ValidateMaximumLength(25)]
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 
     public int CouncilId { get; set; }

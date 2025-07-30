@@ -32,6 +32,7 @@ public class QueryCouncil : QueryDb<Council> { }
 public class CreateCouncil : ICreateDb<Council>, IReturn<IdResponse>
 {
     [ValidateMaximumLength(25)]
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 }
 
@@ -43,6 +44,7 @@ public class UpdateCouncil : IPatchDb<Council>, IReturn<IdResponse>
     public int Id { get; set; }
 
     [ValidateMaximumLength(25)]
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 }
 
