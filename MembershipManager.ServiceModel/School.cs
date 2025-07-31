@@ -67,6 +67,7 @@ public class QuerySchool : QueryDb<School> { }
 [AutoApply(Behavior.AuditCreate)]
 public class CreateSchool : ICreateDb<School>, IReturn<IdResponse>
 {
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 
     [ApiAllowableValues(typeof(SchoolType))]
@@ -89,6 +90,8 @@ public class CreateSchool : ICreateDb<School>, IReturn<IdResponse>
 public class UpdateSchool : IPatchDb<School>, IReturn<IdResponse>
 {
     public int Id { get; set; }
+
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 
     [ApiAllowableValues(typeof(GradeLevels))]

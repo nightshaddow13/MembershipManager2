@@ -40,6 +40,7 @@ public class QueryNotes : QueryDb<Note>
 [AutoApply(Behavior.AuditCreate)]
 public class CreateNote : ICreateDb<Note>, IReturn<IdResponse>
 {
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 }
 
@@ -51,6 +52,7 @@ public class UpdateNote : IPatchDb<Note>, IReturn<IdResponse>
     public int Id { get; set; }
 
     [ValidateMaximumLength(25)]
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
 }
 

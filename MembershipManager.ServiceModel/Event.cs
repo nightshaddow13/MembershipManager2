@@ -14,6 +14,7 @@ public class Event : AuditBase
 
     // Event information
     public EventType EventType { get; set; }
+
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
 
@@ -72,6 +73,8 @@ public class CreateEvent : ICreateDb<Event>, IReturn<IdResponse>
 {
     [ApiAllowableValues(typeof(EventType))]
     public EventType EventType { get; set; }
+
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
 
@@ -100,6 +103,8 @@ public class UpdateEvent : IPatchDb<Event>, IReturn<IdResponse>
 
     [ApiAllowableValues(typeof(EventType))]
     public EventType EventType { get; set; }
+
+    [ValidateNotEmpty]
     public string Description { get; set; } = string.Empty;
     public DateTime DateTime { get; set; }
 
