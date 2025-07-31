@@ -6,7 +6,7 @@ import { ValidateAuth } from "@/useAuth";
 function Index() {
 	return (
 		<Page title="School Management">
-			<SearchContainer search={SearchSchools()} />
+			<SearchContainer SearchClass={SearchSchools} />
 		</Page>
 	);
 }
