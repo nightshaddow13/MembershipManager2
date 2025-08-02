@@ -1,11 +1,24 @@
 import { useClient } from "@/gateway";
 import { useCallback, useEffect, useState } from "react";
 import { Input } from "./ui/input";
-import { IReturn, ISearch, QueryResponse } from "@/dtos";
+import { IReturn, ISearch } from "@/dtos";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { LucideProps } from "lucide-react";
 
 type SearchConstructor<T extends ISearch> = new () => T;
 
-export class SearchCardInfo {}
+export class SearchCardStatistic {
+	public icon?: React.ComponentType<LucideProps>;
+	public text: string = "";
+	public statistic: number = 0;
+}
+
+export class SearchCardInfo {
+	public key: number = 0;
+	public onClick: (key: number) => void = (key) => {};
+	public title: string = "";
+	public statistics: SearchCardStatistic[] = [];
+}
 
 type Props<TThing, TSearch extends ISearch & IReturn<TThing[]>> = {
 	SearchClass: SearchConstructor<TSearch>;
@@ -37,7 +50,6 @@ function SearchContainer<TThing, TSearch extends ISearch & IReturn<TThing[]>>({
 			const api = await client.api(query);
 			if (api.succeeded) {
 				setThings(api.response ?? []);
-				console.info(things);
 			}
 		},
 		[client]
@@ -55,9 +67,42 @@ function SearchContainer<TThing, TSearch extends ISearch & IReturn<TThing[]>>({
 			/>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-				{things.map((thing) => (
-					<p>thing</p>
-				))}
+				{things.map((thing) => {
+					const cardInfo = mapToCard(thing);
+					return (
+						<Card
+							key={cardInfo.key}
+							onClick={() => cardInfo.onClick(cardInfo.key)}
+							className="cursor-pointer hover:shadow-lg transition-shadow duration-200"
+							role="button"
+							tabIndex={0}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									cardInfo.onClick(cardInfo.key);
+								}
+							}}
+						>
+							<CardHeader>
+								<CardTitle>{cardInfo.title}</CardTitle>
+								<CardContent className="flex flex-col justify-between flex-grow space-y-2">
+									{cardInfo.statistics.map((statistic, index) => (
+										<div
+											key={index}
+											className="flex items-center space-x-2"
+										>
+											{statistic.icon && (
+												<statistic.icon className="w-5 h-5 text-muted-foreground" />
+											)}
+											<span>
+												test {statistic.statistic} {statistic.text}
+											</span>
+										</div>
+									))}
+								</CardContent>
+							</CardHeader>
+						</Card>
+					);
+				})}
 			</div>
 		</div>
 	);
