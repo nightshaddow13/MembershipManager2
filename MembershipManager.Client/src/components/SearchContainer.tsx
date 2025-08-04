@@ -8,26 +8,28 @@ import { LucideProps } from "lucide-react";
 type SearchConstructor<T extends ISearch> = new () => T;
 
 export class SearchCardStatistic {
-	public icon?: React.ComponentType<LucideProps>;
-	public text: string = "";
-	public statistic: number = 0;
+	icon?: React.ComponentType<LucideProps>;
+	text: string = "";
+	statistic: number = 0;
 }
 
 export class SearchCardInfo {
-	public key: number = 0;
-	public onClick: (key: number) => void = (key) => {};
-	public title: string = "";
-	public statistics: SearchCardStatistic[] = [];
+	key: number = 0;
+	onClick: (key: number) => void = (key) => {};
+	title: string = "";
+	statistics: SearchCardStatistic[] = [];
 }
 
 type Props<TThing, TSearch extends ISearch & IReturn<TThing[]>> = {
 	SearchClass: SearchConstructor<TSearch>;
 	mapToCard: (dto: TThing) => SearchCardInfo;
+	pluralName: string;
 };
 
 function SearchContainer<TThing, TSearch extends ISearch & IReturn<TThing[]>>({
 	SearchClass,
 	mapToCard,
+	pluralName,
 }: Props<TThing, TSearch>) {
 	const client = useClient();
 
@@ -59,7 +61,7 @@ function SearchContainer<TThing, TSearch extends ISearch & IReturn<TThing[]>>({
 		<div className="p-6 space-y-6">
 			<Input
 				type="search"
-				placeholder="Search units..."
+				placeholder={`Search ${pluralName}...`}
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
 				className="w-full max-w-lg"
@@ -84,22 +86,22 @@ function SearchContainer<TThing, TSearch extends ISearch & IReturn<TThing[]>>({
 						>
 							<CardHeader>
 								<CardTitle>{cardInfo.title}</CardTitle>
-								<CardContent className="flex flex-col justify-between flex-grow space-y-2">
-									{cardInfo.statistics.map((statistic, index) => (
-										<div
-											key={index}
-											className="flex items-center space-x-2"
-										>
-											{statistic.icon && (
-												<statistic.icon className="w-5 h-5 text-muted-foreground" />
-											)}
-											<span>
-												test {statistic.statistic} {statistic.text}
-											</span>
-										</div>
-									))}
-								</CardContent>
 							</CardHeader>
+							<CardContent className="flex flex-col justify-between flex-grow space-y-2">
+								{cardInfo.statistics.map((statistic, index) => (
+									<div
+										key={index}
+										className="flex items-center space-x-2"
+									>
+										{statistic.icon && (
+											<statistic.icon className="w-5 h-5 text-muted-foreground" />
+										)}
+										<span>
+											{statistic.statistic} {statistic.text}
+										</span>
+									</div>
+								))}
+							</CardContent>
 						</Card>
 					);
 				})}

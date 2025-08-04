@@ -11,7 +11,7 @@ public class SchoolServices(IAutoQueryData autoQuery) : Service
     // need to figure out how to write a custom search query.  I got it working but it doesnt retur the expected response type
     public async Task<List<School>> GetAsync(SearchSchools query)
     {
-        var q = Db.From<School>();
+        var q = Db.From<School>().Where(x => x.DeletedBy == null);
         
         // https://stackoverflow.com/questions/72913628/servicestack-customizable-adhoc-queries-with-multiple-fields
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))

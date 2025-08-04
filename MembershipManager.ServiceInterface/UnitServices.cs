@@ -11,7 +11,7 @@ public class UnitServices(IAutoQueryData autoQuery) : Service
     // need to figure out how to write a custom search query.  I got it working but it doesnt retur the expected response type
     public async Task<List<Unit>> GetAsync(SearchUnits query)
     {
-        var q = Db.From<Unit>();
+        var q = Db.From<Unit>().Where(x => x.DeletedBy == null);
         
         // https://stackoverflow.com/questions/72913628/servicestack-customizable-adhoc-queries-with-multiple-fields
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))

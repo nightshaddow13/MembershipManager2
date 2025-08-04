@@ -5,19 +5,22 @@ import SearchContainer, {
 } from "@/components/SearchContainer";
 import { School, SearchSchools } from "@/dtos";
 import { ValidateAuth } from "@/useAuth";
-import { Building, CalendarDays } from "lucide-react";
+import { CalendarDays, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Index() {
+	const navigate = useNavigate();
+
 	function mapSchoolToCard(school: School) {
 		const stat1 = new SearchCardStatistic();
 		stat1.icon = CalendarDays;
-		stat1.statistic = 1;
-		stat1.text = "one";
+		stat1.statistic = school.eventsLink.length;
+		stat1.text = "Upcoming Events";
 
 		const stat2 = new SearchCardStatistic();
-		stat2.icon = Building;
-		stat2.statistic = 2;
-		stat2.text = "Two";
+		stat2.icon = Users;
+		stat2.statistic = school.unitsLink.length;
+		stat2.text = "Linked Units";
 
 		const stats: SearchCardStatistic[] = [stat1, stat2];
 
@@ -25,8 +28,8 @@ function Index() {
 
 		card.key = school.id;
 		card.title = school.description;
-		card.onClick = (number: number) => {
-			console.log(number);
+		card.onClick = (schoolId: number) => {
+			navigate(`/schools/${schoolId}`);
 		};
 		card.statistics = stats;
 
@@ -38,6 +41,7 @@ function Index() {
 			<SearchContainer
 				SearchClass={SearchSchools}
 				mapToCard={mapSchoolToCard}
+				pluralName="Schools"
 			/>
 		</Page>
 	);
