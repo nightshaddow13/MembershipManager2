@@ -17,7 +17,8 @@ public class SchoolServices(IAutoQueryData autoQuery) : Service
         if (!string.IsNullOrWhiteSpace(query.SearchTerm))
         {
             var searchTerm = query.SearchTerm.ToLower();
-            q.Where(x => x.Description.Contains(searchTerm));
+            q.Where(x => x.Description.Contains(searchTerm))
+                .OrderBy(x => x.EventsLink.Count).ThenBy(x => x.UnitsLink.Count);
         }
 
         var results =  await Db.LoadSelectAsync(q);
