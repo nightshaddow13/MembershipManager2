@@ -15,7 +15,7 @@ export class SearchCardStatistic {
 
 export class SearchCardInfo {
 	key: number = 0;
-	onClick: (key: number) => void = (key) => {};
+	onClick: (key: number) => void = () => {};
 	title: string = "";
 	statistics: SearchCardStatistic[] = [];
 }
