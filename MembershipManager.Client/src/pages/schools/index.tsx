@@ -1,130 +1,50 @@
 import Page from "@/components/LayoutPage";
+import SearchContainer, {
+	SearchCardInfo,
+	SearchCardStatistic,
+} from "@/components/SearchContainer";
+import { School, SearchSchools } from "@/dtos";
 import { ValidateAuth } from "@/useAuth";
-
-import { School, QuerySchool, CreateSchool, UpdateSchool, DeleteSchool, SchoolType, State, GradeLevels } from "@/dtos";
-import { useApp } from "@/gateway.ts";
-import { columnDefs } from "@/components/DataTable";
-import { FormInput, InputType } from "@/types";
-import EditTable from "@/components/EditTable";
+import { CalendarDays, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Index() {
-    const app = useApp()
+	const navigate = useNavigate();
 
-    const columns = columnDefs(['description', 'schoolType', 'gradeLevels', 'address', 'city', 'state', 'zipCode'])
+	function mapSchoolToCard(school: School) {
+		const stat1 = new SearchCardStatistic();
+		stat1.icon = CalendarDays;
+		stat1.statistic = school.eventsLink.length;
+		stat1.text = "Upcoming Events";
 
-    const createInputs: FormInput[] = [
-        {
-            type: InputType.TextInput,
-            id: "description",
-            value: (dto: CreateSchool) => {return dto.description},
-            onChange: (dto: CreateSchool, value: string) => {dto.description = value as string;}
-        },
-        {
-            type: InputType.Select,
-            id: "schoolType",
-            options: (app.enumOptions('SchoolType')),
-            value: (dto: CreateSchool) => {return dto.schoolType},
-            onChange: (dto: CreateSchool, value: string) => {dto.schoolType = value as SchoolType;}
-        },
-        {
-            type: InputType.Select,
-            id: "gradeLevels",
-            options: (app.enumOptions('GradeLevels')),
-            value: (dto: CreateSchool) => {return dto.gradeLevels},
-            onChange: (dto: CreateSchool, value: string) => {dto.gradeLevels = value as GradeLevels;}
-        },
-        {
-            type: InputType.TextInput,
-            id: "address",
-            value: (dto: CreateSchool) => {return dto.address},
-            onChange: (dto: CreateSchool, value: string) => {dto.address = value as string;}
-        },
-        {
-            type: InputType.TextInput,
-            id: "city",
-            value: (dto: CreateSchool) => {return dto.city},
-            onChange: (dto: CreateSchool, value: string) => {dto.city = value as string;}
-        },
-        {
-            type: InputType.Select,
-            id: "state",
-            options: (app.enumOptions('State')),
-            value: (dto: CreateSchool) => {return dto.state},
-            onChange: (dto: CreateSchool, value: string) => {dto.state = value as State;}
-        },
-        {
-            type: InputType.TextInput,
-            id: "zipCode",
-            value: (dto: CreateSchool) => {return dto.zipCode},
-            onChange: (dto: CreateSchool, value: string) => {dto.zipCode = value as string;}
-        }
-    ]
-    const editInputs: FormInput[] = [
-        {
-            type: InputType.TextInput,
-            id: "description",
-            value: (dto: CreateSchool) => {return dto.description},
-            onChange: (dto: CreateSchool, value: string) => {dto.description = value as string;}
-        },
-        {
-            type: InputType.Select,
-            id: "schoolType",
-            options: (app.enumOptions('SchoolType')),
-            value: (dto: CreateSchool) => {return dto.schoolType},
-            onChange: (dto: CreateSchool, value: string) => {dto.schoolType = value as SchoolType;}
-        },
-        {
-            type: InputType.Select,
-            id: "gradeLevels",
-            options: (app.enumOptions('GradeLevels')),
-            value: (dto: CreateSchool) => {return dto.gradeLevels},
-            onChange: (dto: CreateSchool, value: string) => {dto.gradeLevels = value as GradeLevels;}
-        },
-        {
-            type: InputType.TextInput,
-            id: "address",
-            value: (dto: CreateSchool) => {return dto.address},
-            onChange: (dto: CreateSchool, value: string) => {dto.address = value as string;}
-        },
-        {
-            type: InputType.TextInput,
-            id: "city",
-            value: (dto: CreateSchool) => {return dto.city},
-            onChange: (dto: CreateSchool, value: string) => {dto.city = value as string;}
-        },
-        {
-            type: InputType.TextInput,
-            id: "zipCode",
-            value: (dto: CreateSchool) => {return dto.zipCode},
-            onChange: (dto: CreateSchool, value: string) => {dto.zipCode = value as string;}
-        }
-    ]
+		const stat2 = new SearchCardStatistic();
+		stat2.icon = Users;
+		stat2.statistic = school.unitsLink.length;
+		stat2.text = "Linked Units";
 
-    const createInstance = () => new CreateSchool()
-    const editInstance = () => new UpdateSchool()
-    const create= (request: any) => new CreateSchool(request)
-    const query = (dto: Partial<QuerySchool>) => new QuerySchool(dto)
-    const update = (dto: Partial<UpdateSchool>) => new UpdateSchool(dto)
-    const delete_ = (dto: Partial<DeleteSchool>) => new DeleteSchool(dto)
-    const getId = (dto: School | null) => dto?.id
+		const stats: SearchCardStatistic[] = [stat1, stat2];
 
-    return(<Page title="School Management">
-        <div className="mt-4 flex flex-col">
-            <EditTable<School> 
-                createRole='MembershipChair'
-                typeName="School"
-                columns={columns}
-                createInputs={createInputs}
-                editInputs={editInputs}
-                createInstance={createInstance}
-                editInstance={editInstance}
-                query={query}
-                create={create}
-                update={update}
-                delete_={delete_}
-                getId={getId} />
-        </div>
-    </Page>)
+		const card = new SearchCardInfo();
+
+		card.key = school.id;
+		card.title = school.description;
+		card.onClick = (schoolId: number) => {
+			navigate(`/schools/${schoolId}`);
+		};
+		card.statistics = stats;
+
+		return card;
+	}
+
+	return (
+		<Page title="School Management">
+			<SearchContainer
+				SearchClass={SearchSchools}
+				mapToCard={mapSchoolToCard}
+				pluralName="Schools"
+			/>
+		</Page>
+	);
 }
 
-export default ValidateAuth(Index, { role: 'NewMemberCoordinator'})
+export default ValidateAuth(Index, { role: "NewMemberCoordinator" });
