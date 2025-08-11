@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-07-29 21:03:54
+Date: 2025-08-10 20:41:26
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -901,6 +901,7 @@ export class QueryNotes extends QueryDb<Note> implements IReturn<QueryResponse<N
 // @ValidateRequest(Validator="HasRole(`NewMemberCoordinator`)")
 export class QuerySchool extends QueryDb<School> implements IReturn<QueryResponse<School>>
 {
+    public id?: number;
 
     public constructor(init?: Partial<QuerySchool>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'QuerySchool'; }
@@ -1081,6 +1082,7 @@ export class DeleteCoupon implements IReturnVoid, IDeleteDb<Coupon>
 export class CreateCouncil implements IReturn<IdResponse>, ICreateDb<Council>
 {
     // @Validate(Validator="MaximumLength(25)")
+    // @Validate(Validator="NotEmpty")
     public description: string;
 
     public constructor(init?: Partial<CreateCouncil>) { (Object as any).assign(this, init); }
@@ -1095,6 +1097,7 @@ export class UpdateCouncil implements IReturn<IdResponse>, IPatchDb<Council>
 {
     public id: number;
     // @Validate(Validator="MaximumLength(25)")
+    // @Validate(Validator="NotEmpty")
     public description: string;
 
     public constructor(init?: Partial<UpdateCouncil>) { (Object as any).assign(this, init); }
@@ -1120,6 +1123,7 @@ export class DeleteCouncil implements IReturnVoid, IDeleteDb<Council>
 export class CreateDistrict implements IReturn<IdResponse>, ICreateDb<District>
 {
     // @Validate(Validator="MaximumLength(25)")
+    // @Validate(Validator="NotEmpty")
     public description: string;
 
     public councilId: number;
@@ -1136,6 +1140,7 @@ export class UpdateDistrict implements IReturn<IdResponse>, IPatchDb<District>
 {
     public id: number;
     // @Validate(Validator="MaximumLength(25)")
+    // @Validate(Validator="NotEmpty")
     public description: string;
 
     public councilId: number;
@@ -1163,7 +1168,9 @@ export class DeleteDistrict implements IReturnVoid, IDeleteDb<District>
 export class CreateEvent implements IReturn<IdResponse>, ICreateDb<Event>
 {
     public eventType: EventType;
+    // @Validate(Validator="NotEmpty")
     public description: string;
+
     public dateTime: string;
     public address: string;
     public city: string;
@@ -1189,7 +1196,9 @@ export class UpdateEvent implements IReturn<IdResponse>, IPatchDb<Event>
 {
     public id: number;
     public eventType: EventType;
+    // @Validate(Validator="NotEmpty")
     public description: string;
+
     public dateTime: string;
     public address: string;
     public city: string;
@@ -1312,6 +1321,7 @@ export class DeleteEventUnit implements IReturnVoid, IDeleteDb<EventUnit>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class CreateNote implements IReturn<IdResponse>, ICreateDb<Note>
 {
+    // @Validate(Validator="NotEmpty")
     public description: string;
 
     public constructor(init?: Partial<CreateNote>) { (Object as any).assign(this, init); }
@@ -1326,6 +1336,7 @@ export class UpdateNote implements IReturn<IdResponse>, IPatchDb<Note>
 {
     public id: number;
     // @Validate(Validator="MaximumLength(25)")
+    // @Validate(Validator="NotEmpty")
     public description: string;
 
     public constructor(init?: Partial<UpdateNote>) { (Object as any).assign(this, init); }
@@ -1350,7 +1361,9 @@ export class DeleteNote implements IReturnVoid, IDeleteDb<Note>
 // @ValidateRequest(Validator="HasRole(`Committee`)")
 export class CreateSchool implements IReturn<IdResponse>, ICreateDb<School>
 {
+    // @Validate(Validator="NotEmpty")
     public description: string;
+
     public schoolType: SchoolType;
     public gradeLevels: GradeLevels;
     public address: string;
@@ -1369,7 +1382,9 @@ export class CreateSchool implements IReturn<IdResponse>, ICreateDb<School>
 export class UpdateSchool implements IReturn<IdResponse>, IPatchDb<School>
 {
     public id: number;
+    // @Validate(Validator="NotEmpty")
     public description: string;
+
     public gradeLevels: GradeLevels;
     public address: string;
     public city: string;

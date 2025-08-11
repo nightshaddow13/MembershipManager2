@@ -2,7 +2,6 @@
 using MembershipManager.ServiceModel.Interfaces;
 using ServiceStack;
 using ServiceStack.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MembershipManager.ServiceModel;
 
@@ -60,7 +59,10 @@ public enum SchoolType
 [ValidateHasRole(Roles.NewMemberCoordinator)]
 [Tag("Schools"), Description("Find Schools")]
 [AutoApply(Behavior.AuditQuery)]
-public class QuerySchool : QueryDb<School> { }
+public class QuerySchool : QueryDb<School> 
+{
+    public int? Id { get; set; }
+}
 
 [ValidateHasRole(Roles.Committee)]
 [Tag("Schools"), Description("Create a new School")]
