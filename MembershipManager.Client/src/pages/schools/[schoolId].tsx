@@ -1,11 +1,4 @@
-import {
-	CreateSchoolNote,
-	GradeLevels,
-	QuerySchool,
-	School,
-	SchoolType,
-	State,
-} from "@/dtos";
+import { CreateSchoolNote, QuerySchool, School } from "@/dtos";
 import { useClient } from "@/gateway";
 import Layout from "@/components/Layout";
 import { useEffect, useState } from "react";
@@ -62,11 +55,11 @@ const SchoolDetailPage = () => {
 					</h1>
 
 					{/* Container for side-by-side cards with notes spanning vertically */}
-					<div className="flex flex-col md:flex-row md:space-x-6 mx-auto max-w-6xl w-full px-4">
+					<div className="flex flex-col md:flex-row md:space-x-6 mx-auto max-w-6xl w-full px-4 items-stretch">
 						{/* Left side: event info and checklist stacked vertically */}
-						<div className="flex flex-col md:flex-col md:w-1/3 space-y-6">
+						<div className="flex flex-col md:w-1/3 space-y-6">
 							{/* Event Info Card */}
-							<Card className="bg-white dark:bg-gray-800 p-6">
+							<Card className="bg-white dark:bg-gray-800 p-6 h-full flex-grow">
 								<div className="text-lg space-y-4">
 									<p>
 										<span className="font-semibold">Type:</span>{" "}
@@ -88,7 +81,7 @@ const SchoolDetailPage = () => {
 						</div>
 
 						{/* Notes List Card spanning full height of left column */}
-						<Card className="md:w-2/3 p-6 bg-white dark:bg-gray-800">
+						<Card className="md:w-2/3 p-6 bg-white dark:bg-gray-800 h-full flex-grow">
 							<NotesList
 								onCreate={createNote}
 								noteIds={noteIds}
