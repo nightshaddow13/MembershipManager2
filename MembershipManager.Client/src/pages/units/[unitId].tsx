@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
+import LinkedListCard from "@/components/LinkedListCard";
 
 const UnitDetailPage = () => {
 	const client = useClient();
@@ -74,6 +75,11 @@ const UnitDetailPage = () => {
 									</p>
 								</div>
 							</Card>
+							<LinkedListCard
+								things={[]}
+								thingName="School"
+								pluralThingName="Schools"
+							/>
 						</div>
 
 						{/* Notes List Card spanning full height of left column */}
