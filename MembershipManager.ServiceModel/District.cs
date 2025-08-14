@@ -18,6 +18,9 @@ public class District : AuditBase
     public int CouncilId { get; set; }
 
     [Reference]
+    public Council? Council { get; set; }
+
+    [Reference]
     public List<Unit> Units { get; set; } = [];
 }
 

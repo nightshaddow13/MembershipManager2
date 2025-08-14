@@ -1,5 +1,5 @@
 /* Options:
-Date: 2025-08-10 20:41:40
+Date: 2025-08-13 20:28:12
 Version: 8.80
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -175,6 +175,15 @@ export class Booking extends AuditBase
     public constructor(init?: Partial<Booking>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class Council extends AuditBase
+{
+    public id: number;
+    public description: string;
+    public districts: District[] = [];
+
+    public constructor(init?: Partial<Council>) { super(init); (Object as any).assign(this, init); }
+}
+
 export enum UnitType
 {
     Pack = 'Pack',
@@ -309,18 +318,10 @@ export class District extends AuditBase
     // @References("typeof(MembershipManager.ServiceModel.Council)")
     public councilId: number;
 
+    public council?: Council;
     public units: Unit[] = [];
 
     public constructor(init?: Partial<District>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class Council extends AuditBase
-{
-    public id: number;
-    public description: string;
-    public districts: District[] = [];
-
-    public constructor(init?: Partial<Council>) { super(init); (Object as any).assign(this, init); }
 }
 
 export enum EventType
