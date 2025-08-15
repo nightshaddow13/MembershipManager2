@@ -1,39 +1,37 @@
 // EventCalendar.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { format, parseISO } from "date-fns";
 import { Card } from "./ui/card";
 
-export interface Thing {
-	id: string;
-	datetime: string; // ISO 8601 datetime with offset, e.g. '2024-06-10T09:00:00-04:00'
-	title: string;
+export class LinkedListDisplayElement {
+	id: number;
+	description: string;
+
+	constructor(id: number, description: string) {
+		(this.id = id), (this.description = description);
+	}
 }
 
 interface LinkedListCardProps {
-	things: Thing[];
-	thingName: string;
-	pluralThingName: string;
-	onAddThing?: () => void;
-	onEditThing?: (thing: Thing) => void;
+	displayElements: LinkedListDisplayElement[];
+	name: string;
+	pluralName: string;
+	onAddRelationship?: () => void;
+	onEditRelationship?: (thing: LinkedListDisplayElement) => void;
 	initialSelectedDate?: Date | null;
 }
 
 const LinkedListCard: React.FC<LinkedListCardProps> = ({
-	things: things,
-	thingName: thingName,
-	pluralThingName: pluralThingName,
-	onAddThing: onAddThing,
-	onEditThing: onEditThing,
+	displayElements: things,
+	name: thingName,
+	pluralName: pluralThingName,
+	onAddRelationship: onAddThing,
+	onEditRelationship: onEditThing,
 }) => {
-	const [selectedThingId, setSelectedThingId] = useState<string | null>(null);
+	const [selectedThingId, setSelectedThingId] = useState<number | null>(null);
 
 	const calendarRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const eventRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-	// Helper to parse event datetime string to Date object
-	// keep me
-	const parseEventDateTime = (ev: Thing): Date => parseISO(ev.datetime);
 
 	// Scroll to the selected event in the sidebar when it changes
 	useEffect(() => {
@@ -51,7 +49,7 @@ const LinkedListCard: React.FC<LinkedListCardProps> = ({
 	};
 
 	// Click on event triggers edit event callback
-	const onThingClick = (thing: Thing) => {
+	const onThingClick = (thing: LinkedListDisplayElement) => {
 		setSelectedThingId(thing.id);
 		if (onEditThing) onEditThing(thing);
 	};
@@ -129,29 +127,15 @@ const LinkedListCard: React.FC<LinkedListCardProps> = ({
 										onThingClick(ev);
 									}
 								}}
-								title={`${format(parseEventDateTime(ev), "p")} - ${ev.title}`}
+								title={ev.description}
 								role="button"
 								aria-pressed={ev.id === selectedThingId}
-								aria-label={`Event ${ev.title} on ${format(
-									parseEventDateTime(ev),
-									"PPP"
-								)}. Click to edit.`}
+								aria-label={ev.description}
 							>
 								<div className="flex justify-between items-center">
 									<span className="font-semibold text-blue-600 dark:text-blue-400 truncate">
-										{ev.title}
+										{ev.description}
 									</span>
-									{/* Display time only when a date is selected }
-									{selectedDate && (
-										<span className="font-mono mr-1 text-xs text-gray-500 dark:text-gray-400">
-											{format(parseEventDateTime(ev), "p")}
-										</span>
-									)}
-									{!selectedDate && (
-										<span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-											{format(parseEventDateTime(ev), "PPP")}
-										</span>
-									)*/}
 								</div>
 							</div>
 						))}

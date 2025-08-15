@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Card } from "@/components/ui/card";
 import NotesList from "@/components/NotesList";
-import LinkedListCard from "@/components/LinkedListCard";
+import LinkedListCard, {
+	LinkedListDisplayElement,
+} from "@/components/LinkedListCard";
 
 const UnitDetailPage = () => {
 	const client = useClient();
@@ -76,9 +78,14 @@ const UnitDetailPage = () => {
 								</div>
 							</Card>
 							<LinkedListCard
-								things={[]}
-								thingName="School"
-								pluralThingName="Schools"
+								displayElements={unit.schoolsLink.map((link) => {
+									return new LinkedListDisplayElement(
+										link.id,
+										link.school.description
+									);
+								})}
+								name="School"
+								pluralName="Schools"
 							/>
 						</div>
 
