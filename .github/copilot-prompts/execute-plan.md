@@ -23,7 +23,7 @@ Read plan file: `$ARGUMENTS`
 - Understand all tasks and their dependencies
 - Note the validation commands to run (plan and/or AGENTS.md: e.g. `npm test`, `dotnet build`)
 - Review the testing strategy (see **AGENTS.md** and **TESTING_STANDARDS.md** for this repo)
-- **Check for Figma design references** - If present, note them for visual validation later
+- **Check for design references** - If present, note them for visual validation later
 
 ### 2. Execute Tasks in Order
 
@@ -36,7 +36,7 @@ For EACH task in "Step by Step Tasks":
 #### b. Implement the task
 - Follow the detailed specifications exactly
 - Follow project conventions in **AGENTS.md** (e.g. primary constructors, records for events, ResultExtensions for handler assertions)
-- **If UI feature with Figma designs**: Use design specifications from plan (colors, typography, spacing)
+- **If UI feature with design references**: Use design specifications from plan (colors, typography, spacing)
 - Maintain consistency with existing code patterns
 - Include proper types and documentation as appropriate for the stack
 - Add structured logging where appropriate
@@ -193,7 +193,7 @@ Example:
 - If tests fail, fix implementation until they pass
 - **NEVER skip validation steps** - ALL levels must be completed
 - **NEVER declare completion without providing validation results for ALL levels**
-- If a validation level doesn't apply (e.g., no Figma designs), explicitly mark it as N/A in your report
+- If a validation level doesn't apply (e.g., no design references), explicitly mark it as N/A in your report
 
 ## Completion Checklist
 

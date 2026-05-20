@@ -46,6 +46,7 @@ Create a well-structured PRD with the following sections. Adjust detail based on
 - Inspect `MembershipManager/Program.cs`, `MembershipManager/Configure.Db.cs`, `MembershipManager.csproj`
 - Inspect `MembershipManager.Client/package.json`, `vite.config.ts`, `tsconfig.json`
 - Inspect `.github/workflows/*.yml` for CI/CD validation flow
+- Look up any referenced ticket or story in this repo's GitHub Projects board or linked GitHub issue cards. Use GitHub Projects as the source for acceptance criteria, story details, and task context instead of Jira.
 - Note that `MembershipManager.Tests/IntegrationTest.cs` is currently commented out
 
 ### 2. Extract Requirements
@@ -109,7 +110,7 @@ After generating the PRD:
 - Trust the repo-specific instructions rather than global defaults
 - Only search for more repo context if the available files are insufficient
 - Emphasize `.github/copilot-instructions.md` and `README.md` for build and validation details
-- If designs are referenced in conversation, include full Figma URLs if available
+- If designs are referenced in conversation, include full design URLs if available
 
 ---
 

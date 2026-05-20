@@ -26,7 +26,7 @@ Transform a feature request into a **comprehensive implementation plan** through
 - Determine feature type: New Capability/Enhancement/Refactor/Bug Fix
 - Assess complexity: Low/Medium/High
 - Map affected systems and components
-- **Check for Figma design links** - If any Figma URLs are provided, note them for Phase 2
+- **Check for design links** - If any design URLs are provided, note them for Phase 2
 
 **Create User Story Format Or Refine If Story Was Provided By The User:**
 
@@ -40,14 +40,14 @@ So that <benefit/value>
 
 **Use specialized agents and parallel analysis:**
 
-**0. Design Extraction** (UI features only - if Figma links provided)
+**0. Design Extraction** (UI features only - if design links provided)
 
-If Figma design links were provided, use Figma SKILL to extract design context:
-- Analyze the Figma skill to determine specific calls to make based on the Figma URL(s) provided by the user.
+If design links were provided, extract design context:
+- Identify the source or tool behind the design URL and note it for review.
 - Save screenshots to `.ai/design-references/{feature-name}/`
 - Extract design specs: colors, typography, spacing, states
-- Include reference code (adapt to project patterns)
-- Document all in the plan's "Figma Design References" section
+- Include reference code or implementation notes if available
+- Document all in the plan's "Design References" section
 
 **1. Project Structure Analysis**
 
@@ -56,6 +56,7 @@ If Figma design links were provided, use Figma SKILL to extract design context:
 - Identify service/component boundaries and integration points
 - Locate configuration files (package.json, Lubesoft.sln, *.csproj, docker-compose.yml, etc.; see **AGENTS.md** → Key Files)
 - Find environment setup and build processes
+- Locate this repo’s GitHub Projects board or issue cards when a ticket/story is referenced. Use GitHub Projects as the ticket source for story context, acceptance criteria, and dependencies instead of Jira.
 
 **2. Pattern Recognition** (Use specialized subagents when beneficial)
 
@@ -190,20 +191,20 @@ So that <benefit/value>
 
 ## CONTEXT REFERENCES
 
-### Figma Design References (if applicable - UI features only)
+### Design References (if applicable - UI features only)
 
-**CRITICAL**: If this is a UI feature with Figma designs:
+**CRITICAL**: If this is a UI feature with design references:
 
-- **Figma URLs**: [List all Figma design links with full URLs]
-  - Example: `https://figma.com/design/abc123/FeatureName?node-id=1-2`
+- **Design URLs**: [List all design links with full URLs]
+  - Example: `https://example.com/design/abc123/FeatureName?node-id=1-2`
 - **Design Screenshots**: [Paths to saved screenshots]
-  - `.ai/design-references/{feature-name}/figma-node-1-2.png`
+  - `.ai/design-references/{feature-name}/design-node-1-2.png`
 - **Design Specifications**:
   - Colors: [extracted from design]
   - Typography: [fonts, sizes, weights]
   - Spacing: [margins, padding values]
   - Component states: [hover, active, disabled, etc.]
-- **Reference Code**: [Adapted code from Figma Code Connect if available]
+- **Reference Code**: [Adapted code from design asset source if available]
 
 ### Relevant Codebase Files IMPORTANT: YOU MUST READ THESE FILES BEFORE IMPLEMENTING!
 
@@ -515,12 +516,12 @@ grep -i "alpine" src/WebApp/Pages/_Layout.cshtml
 
 <Feature-specific manual testing steps - API calls, UI testing, etc.>
 
-### Level 6: Visual Validation (UI features with Figma designs only)
+### Level 6: Visual Validation (UI features with design references only)
 
-If Figma designs were provided:
+If design references were provided:
 - Start application and open in browser
 - Take screenshots of implementation
-- Compare with Figma screenshots from `.ai/design-references/`
+- Compare with reference screenshots from `.ai/design-references/`
 - Validate: colors, typography, spacing, layout, component states
 - Fix any mismatches before completion
 

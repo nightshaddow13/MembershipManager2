@@ -9,7 +9,7 @@ Compares two images and produces detailed text analysis of differences -- no MCP
 
 ## Use Cases
 
-- **Design validation**: Compare Figma exports with implementation screenshots
+- **Design validation**: Compare design mockups with implementation screenshots
 - **Visual regression testing**: Detect unintended UI changes
 - **QA review**: Identify gaps between mockups and live applications
 - **Cross-browser testing**: Compare screenshots from different environments
@@ -38,8 +38,8 @@ SCRIPT=".ai/skills/image-comparison/compare-images.sh"
 # Compare two images (produces detailed text analysis)
 bash $SCRIPT <design-image> <implementation-image>
 
-# Example: Compare Figma export with screenshot
-bash $SCRIPT figma-exports/game-canvas-design.png screenshots/current-game.png
+# Example: Compare a design mockup with a screenshot
+bash $SCRIPT design-exports/game-canvas-design.png screenshots/current-game.png
 
 # Example: Compare with diff output image
 bash $SCRIPT design.png screenshot.png --output diff.png

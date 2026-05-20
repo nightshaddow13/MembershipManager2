@@ -65,6 +65,8 @@ cat AGENTS.md
 cat .ai/docs/README.md
 ```
 
+- If the branch or feature references a ticket or story, look it up in this repo's GitHub Projects board or linked GitHub issue cards. Use GitHub Projects as the story source of truth and do not use Jira.
+
 **THEN READ SELECTIVELY** based on what changed:
 
 **If Backend/Event Sourcing Changes**:
