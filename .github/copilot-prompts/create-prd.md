@@ -3,7 +3,7 @@ agent: agent
 description: Create a Product Requirements Document for the MembershipManager repository
 ---
 
-argument-hint: [output-filename]
+argument-hint: [output-filename] [github-issue-id]
 
 # Create PRD: Generate Product Requirements Document
 
@@ -46,7 +46,7 @@ Create a well-structured PRD with the following sections. Adjust detail based on
 - Inspect `MembershipManager/Program.cs`, `MembershipManager/Configure.Db.cs`, `MembershipManager.csproj`
 - Inspect `MembershipManager.Client/package.json`, `vite.config.ts`, `tsconfig.json`
 - Inspect `.github/workflows/*.yml` for CI/CD validation flow
-- Look up any referenced ticket or story in this repo's GitHub Projects board or linked GitHub issue cards. Use GitHub Projects as the source for acceptance criteria, story details, and task context instead of Jira.
+- Look up any referenced ticket or story in this repo's GitHub Projects board or linked GitHub issue cards. If a GitHub issue ID is present in the conversation or arguments, use that issue to source acceptance criteria, story details, and task context. Use GitHub Projects as the source for acceptance criteria, story details, and task context instead of Jira.
 - Note that `MembershipManager.Tests/IntegrationTest.cs` is currently commented out
 
 ### 2. Extract Requirements
