@@ -2,13 +2,13 @@
 
 ## Project Overview
 
-This repository is a full-stack .NET 8 and React SPA application for membership management. It combines a ServiceStack-based ASP.NET Core backend with a React 19 frontend built with Vite and Tailwind CSS.
+This repository is a full-stack .NET 10 and React SPA application for membership management. It combines a ServiceStack-based ASP.NET Core backend with a React 19 frontend built with Vite and Tailwind CSS.
 
 The backend is implemented in `MembershipManager/` and includes authentication, EF Core/OrmLite database configuration, and ServiceStack APIs. The frontend lives in `MembershipManager.Client/` and contains a modern React + TypeScript application with file-based routing and markdown-powered content.
 
 ## Tech Stack
 
-- .NET 8.0
+- .NET 10.0
 - ASP.NET Core
 - ServiceStack 8.x
 - Entity Framework Core

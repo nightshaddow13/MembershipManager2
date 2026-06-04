@@ -55,6 +55,6 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Copy React build output into wwwroot (adjust path if needed)
-COPY --from=client-build /app/MembershipManager.Client/build ./wwwroot
+COPY --from=client-build /app/MembershipManager.Client/dist ./wwwroot
 
 ENTRYPOINT ["dotnet", "MembershipManager.dll"]

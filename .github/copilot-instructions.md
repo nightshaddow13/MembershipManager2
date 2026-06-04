@@ -2,10 +2,10 @@
 
 ## Project Overview
 
-**MembershipManager** is a .NET 8.0 + React SPA (Single Page Application) for managing organizational memberships. It combines a robust backend API built with ASP.NET Core 8 and ServiceStack framework with a modern React 19 frontend using Vite and Tailwind CSS.
+**MembershipManager** is a .NET 10.0 + React SPA (Single Page Application) for managing organizational memberships. It combines a robust backend API built with ASP.NET Core 10 and ServiceStack framework with a modern React 19 frontend using Vite and Tailwind CSS.
 
 **Technology Stack:**
-- **Backend:** .NET 8.0, ASP.NET Core, ServiceStack 8.x, Entity Framework Core, OrmLite
+- **Backend:** .NET 10.0, ASP.NET Core, ServiceStack 10.x, Entity Framework Core, OrmLite
 - **Frontend:** React 19, TypeScript, Vite, Tailwind CSS 4, Radix UI
 - **Database:** SQL Server (default) or SQLite with support for Azure SQL
 - **Authentication:** ASP.NET Identity
@@ -16,13 +16,13 @@
 ## Prerequisites & Environment Setup
 
 **REQUIRED BEFORE BUILD:**
-- **.NET 8.0 SDK** - Download from https://dotnet.microsoft.com/download
+- **.NET 10.0 SDK** - Download from https://dotnet.microsoft.com/download
 - **Node.js 22+** - Required for React frontend. Download from https://nodejs.org/ 
 - **SQL Server** - Local development uses `XAVIER-ASUS;Initial Catalog=MMData` (change in `Configure.Db.cs` or set `AZURE_SQL_CONNECTIONSTRING` environment variable for Azure SQL)
 
 **Verification Commands:**
 ```bash
-dotnet --version  # Should show 8.x
+dotnet --version  # Should show 10.x
 node --version    # Should show 22+
 npm --version     # Should show 10+
 ```
@@ -139,7 +139,7 @@ MembershipManager.ServiceInterface/# Service implementations
 **Container Build Pipeline (`.github/workflows/build-container.yml`)**
 - Triggers on: successful build.yml on main/master branches
 - Steps: Setup Node 22 → `npm install` & `npm run build` (frontend) → Docker publish to GHCR
-- Dockerfile uses multi-stage build: node:18 (client build) → dotnet:8.0-sdk (backend build) → dotnet:8.0 runtime
+- Dockerfile uses multi-stage build: node:18 (client build) → dotnet:10.0-sdk (backend build) → dotnet:10.0 runtime
 - Timeout: ~10 minutes
 
 **Release/Deploy Pipeline (`.github/workflows/release.yml`)**
